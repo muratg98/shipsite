@@ -7,6 +7,13 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { CloudLogosBlock } from './CloudLogo/Component'
+import { FeaturesBlock } from './Features/Component'
+import { AccordionBlock } from './Accordion/Component'
+import { ZigZagBlock } from './ZigZag/Component'
+import { PricingBlock } from './Pricing/Component'
+import { TestimonialBlock } from './Testimonial/Component'
+import { TeamBlock } from './Team/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -14,6 +21,13 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  cloudLogos: CloudLogosBlock,
+  features: FeaturesBlock,
+  accordion: AccordionBlock,
+  zigzag: ZigZagBlock,
+  pricing: PricingBlock,
+  testimonial: TestimonialBlock,
+  team: TeamBlock
 }
 
 export const RenderBlocks: React.FC<{
@@ -35,7 +49,6 @@ export const RenderBlocks: React.FC<{
             if (Block) {
               return (
                 <div className="my-16" key={index}>
-                  {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
               )

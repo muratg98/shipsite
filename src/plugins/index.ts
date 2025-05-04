@@ -10,7 +10,7 @@ import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
-
+import { stripePlugin } from '@payloadcms/plugin-stripe'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
@@ -60,25 +60,25 @@ export const plugins: Plugin[] = [
       payment: false,
     },
     formOverrides: {
-      fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
-          if ('name' in field && field.name === 'confirmationMessage') {
-            return {
-              ...field,
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    FixedToolbarFeature(),
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                  ]
-                },
-              }),
-            }
-          }
-          return field
-        })
-      },
+      fields: ({ defaultFields }) => [
+        ...defaultFields,
+        {
+          name: 'formStyle',
+          label: 'Form Style',
+          type: 'select',
+          options: [
+            { label: 'Newsletter', value: 'newsletter' },
+            { label: 'Contact Us', value: 'contact' },
+            { label: 'None', value: 'none' },
+          ],
+          required: true,
+          defaultValue: 'none',
+          admin: {
+            position: 'sidebar',
+            description: 'Select a preset style for this form.',
+          },
+        },
+      ],
     },
   }),
   searchPlugin({
@@ -91,4 +91,41 @@ export const plugins: Plugin[] = [
     },
   }),
   payloadCloudPlugin(),
+  stripePlugin({
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY || '',
+    stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET,
+    sync: [
+      {
+        collection: 'user',
+        stripeResourceType: 'customers',
+        stripeResourceTypeSingular: 'customer',
+        fields: [
+          {
+            fieldPath: 'customerId',
+            stripeProperty: 'id', 
+          },
+        ],
+      },
+    ],
+    webhooks: {
+      'customer.subscription.updated': async ({ event, stripe, config }) => {
+        
+        const subscription = event.data.object; // The subscription object
+
+        const userId = subscription.customer; // Assuming you stored the Stripe customer ID in your user collection
+        const subscriptionStatus = subscription.status; // 'active', 'past_due', 'canceled', etc.
+        const planName = subscription.items.data[0].plan.nickname; // The subscription plan's name
+        const startDate = new Date(subscription.start_date * 1000); // Convert from Unix timestamp
+        const endDate = new Date(subscription.current_period_end * 1000); // Convert from Unix timestamp
+
+      },
+      'customer.subscription.deleted': ({ event, stripe, config }) => {
+        // do something...
+      },
+      'invoice.payment_succeeded': ({ event, stripe, config }) => {
+        // do something...
+      },
+      
+    },
+  }),
 ]

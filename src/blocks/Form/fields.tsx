@@ -19,3 +19,5 @@ export const fields = {
   text: Text,
   textarea: Textarea,
 }
+
+export type FieldBlockTypeKeys = keyof typeof fields

@@ -34,6 +34,21 @@ export const CallToAction: Block = {
         maxRows: 2,
       },
     }),
+    {
+      name: 'useBackgroundImage',
+      type: 'checkbox',
+      label: 'Use Background Image',
+    },
+    {
+      name: 'bgImage',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Background Image',
+      admin: {
+        condition: (_, siblingData) => siblingData?.useBackgroundImage === true,
+      },
+      required: true,
+    },
   ],
   labels: {
     plural: 'Calls to Action',

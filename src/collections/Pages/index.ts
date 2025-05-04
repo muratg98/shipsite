@@ -13,6 +13,14 @@ import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 
+import { Accordion } from '@/blocks/Accordion/config'
+import { Pricing } from '@/blocks/Pricing/config'
+import { CloudLogos } from '@/blocks/CloudLogo/config'
+import { Features } from '@/blocks/Features/config'
+import { Zigzag } from '@/blocks/ZigZag/config'
+import { TestimonialBlock } from '@/blocks/Testimonial/config'
+import { Team } from '@/blocks/Team/config'
+
 import {
   MetaDescriptionField,
   MetaImageField,
@@ -75,7 +83,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, Accordion, Pricing, CloudLogos, Features, Zigzag, TestimonialBlock, Team],
               required: true,
               admin: {
                 initCollapsed: true,
@@ -111,6 +119,11 @@ export const Pages: CollectionConfig<'pages'> = {
             }),
           ],
         },
+        {
+          label: 'Accessiblity',
+          name: 'Access',
+          fields: []
+        },
       ],
     },
     {
@@ -130,7 +143,7 @@ export const Pages: CollectionConfig<'pages'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100, // We set this interval for optimal live preview
+        interval: 100,
       },
       schedulePublish: true,
     },

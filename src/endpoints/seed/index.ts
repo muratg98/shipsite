@@ -40,24 +40,12 @@ export const seed = async ({
   // the custom `/api/seed` endpoint does not
   payload.logger.info(`— Clearing collections and globals...`)
 
-  // clear the database
   await Promise.all(
-    globals.map((global) =>
-      payload.updateGlobal({
-        slug: global,
-        data: {
-          navItems: [],
-        },
-        depth: 0,
-        context: {
-          disableRevalidate: true,
-        },
-      }),
-    ),
+    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
   )
 
   await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
+    globals.map((global) => payload.db.globals.deleteMany({ global, req, where: {} })),
   )
 
   await Promise.all(
@@ -69,7 +57,7 @@ export const seed = async ({
   payload.logger.info(`— Seeding demo author and user...`)
 
   await payload.delete({
-    collection: 'users',
+    collection: 'admins',
     depth: 0,
     where: {
       email: {
@@ -95,9 +83,18 @@ export const seed = async ({
     ),
   ])
 
-  const [demoAuthor, image1Doc, image2Doc, image3Doc, imageHomeDoc] = await Promise.all([
+  const [
+    demoAuthor,
+    image1Doc,
+    image2Doc,
+    image3Doc,
+    imageHomeDoc,
+    technologyCategory,
+    newsCategory,
+    financeCategory,
+  ] = await Promise.all([
     payload.create({
-      collection: 'users',
+      collection: 'admins',
       data: {
         name: 'Demo Author',
         email: 'demo-author@example.com',
@@ -203,6 +200,21 @@ export const seed = async ({
     }),
   ])
 
+  let demoAuthorID: number | string = demoAuthor.id
+
+  let image1ID: number | string = image1Doc.id
+  let image2ID: number | string = image2Doc.id
+  let image3ID: number | string = image3Doc.id
+  let imageHomeID: number | string = imageHomeDoc.id
+
+  if (payload.db.defaultIDType === 'text') {
+    image1ID = `"${image1Doc.id}"`
+    image2ID = `"${image2Doc.id}"`
+    image3ID = `"${image3Doc.id}"`
+    imageHomeID = `"${imageHomeDoc.id}"`
+    demoAuthorID = `"${demoAuthorID}"`
+  }
+
   payload.logger.info(`— Seeding posts...`)
 
   // Do not create posts with `Promise.all` because we want the posts to be created in order
@@ -213,7 +225,12 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post1({ heroImage: image1Doc, blockImage: image2Doc, author: demoAuthor }),
+    data: JSON.parse(
+      JSON.stringify({ ...post1, categories: [technologyCategory.id] })
+        .replace(/"\{\{IMAGE_1\}\}"/g, String(image1ID))
+        .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID))
+        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
+    ),
   })
 
   const post2Doc = await payload.create({
@@ -222,7 +239,12 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post2({ heroImage: image2Doc, blockImage: image3Doc, author: demoAuthor }),
+    data: JSON.parse(
+      JSON.stringify({ ...post2, categories: [newsCategory.id] })
+        .replace(/"\{\{IMAGE_1\}\}"/g, String(image2ID))
+        .replace(/"\{\{IMAGE_2\}\}"/g, String(image3ID))
+        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
+    ),
   })
 
   const post3Doc = await payload.create({
@@ -231,7 +253,12 @@ export const seed = async ({
     context: {
       disableRevalidate: true,
     },
-    data: post3({ heroImage: image3Doc, blockImage: image1Doc, author: demoAuthor }),
+    data: JSON.parse(
+      JSON.stringify({ ...post3, categories: [financeCategory.id] })
+        .replace(/"\{\{IMAGE_1\}\}"/g, String(image3ID))
+        .replace(/"\{\{IMAGE_2\}\}"/g, String(image1ID))
+        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
+    ),
   })
 
   // update each post with related posts
@@ -262,8 +289,14 @@ export const seed = async ({
   const contactForm = await payload.create({
     collection: 'forms',
     depth: 0,
-    data: contactFormData,
+    data: JSON.parse(JSON.stringify(contactFormData)),
   })
+
+  let contactFormID: number | string = contactForm.id
+
+  if (payload.db.defaultIDType === 'text') {
+    contactFormID = `"${contactFormID}"`
+  }
 
   payload.logger.info(`— Seeding pages...`)
 
@@ -271,12 +304,21 @@ export const seed = async ({
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: home({ heroImage: imageHomeDoc, metaImage: image2Doc }),
+      data: JSON.parse(
+        JSON.stringify(home)
+          .replace(/"\{\{IMAGE_1\}\}"/g, String(imageHomeID))
+          .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID)),
+      ),
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: contactPageData({ contactForm: contactForm }),
+      data: JSON.parse(
+        JSON.stringify(contactPageData).replace(
+          /"\{\{CONTACT_FORM_ID\}\}"/g,
+          String(contactFormID),
+        ),
+      ),
     }),
   ])
 
@@ -307,36 +349,36 @@ export const seed = async ({
         ],
       },
     }),
-    payload.updateGlobal({
-      slug: 'footer',
-      data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Payload',
-              newTab: true,
-              url: 'https://payloadcms.com/',
-            },
-          },
-        ],
-      },
-    }),
+    // payload.updateGlobal({
+    //   slug: 'footer',
+    //   data: {
+    //     navItems: [
+    //       {
+    //         link: {
+    //           type: 'custom',
+    //           label: 'Admin',
+    //           url: '/admin',
+    //         },
+    //       },
+    //       {
+    //         link: {
+    //           type: 'custom',
+    //           label: 'Source Code',
+    //           newTab: true,
+    //           url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
+    //         },
+    //       },
+    //       {
+    //         link: {
+    //           type: 'custom',
+    //           label: 'Payload',
+    //           newTab: true,
+    //           url: 'https://payloadcms.com/',
+    //         },
+    //       },
+    //     ],
+    //   },
+    // }),
   ])
 
   payload.logger.info('Seeded database successfully!')

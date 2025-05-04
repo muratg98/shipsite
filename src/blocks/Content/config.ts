@@ -5,6 +5,12 @@ import {
   HeadingFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  AlignFeature,
+  UnorderedListFeature,
+  ChecklistFeature,
+  StrikethroughFeature,
+  ItalicFeature,
+  BoldFeature,
 } from '@payloadcms/richtext-lexical'
 
 import { link } from '@/fields/link'
@@ -37,14 +43,18 @@ const columnFields: Field[] = [
     name: 'richText',
     type: 'richText',
     editor: lexicalEditor({
-      features: ({ rootFeatures }) => {
-        return [
-          ...rootFeatures,
-          HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-          FixedToolbarFeature(),
-          InlineToolbarFeature(),
-        ]
-      },
+      features: ({ rootFeatures }) => [
+        ...rootFeatures,
+        HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+        FixedToolbarFeature(),
+        InlineToolbarFeature(),
+        AlignFeature(),
+        UnorderedListFeature(),
+        ChecklistFeature(),
+        StrikethroughFeature(),
+        ItalicFeature(),
+        BoldFeature(),
+      ],
     }),
     label: false,
   },

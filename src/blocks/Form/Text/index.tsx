@@ -12,11 +12,13 @@ export const Text: React.FC<
   TextField & {
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
+    formStyle?: string
   }
-> = ({ name, defaultValue, errors, label, register, required, width }) => {
+> = ({ name, defaultValue, errors, label, register, required, width, formStyle }) => {
+
   return (
     <Width width={width}>
-      <Label htmlFor={name}>
+      <Label htmlFor={name} className={formStyle === 'newsletter' ? 'text-white' : undefined}>
         {label}
 
         {required && (

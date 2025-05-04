@@ -2,6 +2,7 @@ import tailwindcssAnimate from 'tailwindcss-animate'
 import typography from '@tailwindcss/typography'
 
 /** @type {import('tailwindcss').Config} */
+
 const config = {
   content: [
     './pages/**/*.{ts,tsx}',
@@ -25,6 +26,12 @@ const config = {
     'bg-success/30',
     'border-warning',
     'bg-warning/30',
+    { pattern: /bg-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-[0-9]{2,3}/ },
+    { pattern: /bg-gradient-to-(r|l|t|b|tr|tl|br|bl) from-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-[0-9]{2,3} to-(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)-[0-9]{2,3}/ },
+    { pattern: /bg-\[radial-gradient\(at_[0-9]{1,3}%_[0-9]{1,3}%,theme\(colors\.(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)\.[0-9]{2,3}\),theme\(colors\.(red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|slate|gray|zinc|neutral|stone)\.[0-9]{2,3}\)\)\]/ }
+
+
+
   ],
   theme: {
     container: {
@@ -48,7 +55,8 @@ const config = {
     extend: {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-in',
+        'logo-cloud': 'logo-cloud 30s linear infinite',
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -56,6 +64,16 @@ const config = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          ring: 'hsl(var(--sidebar-ring))',
+        },
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
@@ -106,6 +124,10 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'logo-cloud': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - 4rem))' },
+        }
       },
       typography: () => ({
         DEFAULT: {

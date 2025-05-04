@@ -1,7 +1,7 @@
 // storage-adapter-import-placeholder
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 
-import sharp from 'sharp' // sharp-import
+import sharp from 'sharp' 
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
@@ -10,12 +10,18 @@ import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
-import { Users } from './collections/Users'
-import { Footer } from './Footer/config'
-import { Header } from './Header/config'
+import { User } from './collections/User'
+import { Admins } from './collections/Admins'
+import { Products } from './collections/Products'
+
+import { Footer } from './globals/Footer/config'
+import { Header } from './globals/Header/config'
+import { General } from './globals/General/config'
+
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import brevoAdapter from './utilities/brevoAdapter'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,7 +39,7 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    user: Users.slug,
+    user: Admins.slug,
     livePreview: {
       breakpoints: [
         {
@@ -57,17 +63,17 @@ export default buildConfig({
       ],
     },
   },
-  // This config helps us configure global or default features that the other editors can inherit
+  email: brevoAdapter(),
   editor: defaultLexical,
   db: mongooseAdapter({
     url: process.env.DATABASE_URI || '',
+    autoPluralization: false
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, User, Admins, Products],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, General],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
@@ -78,7 +84,7 @@ export default buildConfig({
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
         // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
+        if (req.user?.collection == "admins") return true
 
         // If there is no logged in user, then check
         // for the Vercel Cron secret to be present as an

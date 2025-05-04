@@ -29,16 +29,36 @@ export const FormBlock: Block = {
         condition: (_, { enableIntro }) => Boolean(enableIntro),
       },
       editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
-        },
+        features: ({ rootFeatures }) => [
+          ...rootFeatures,
+          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+          FixedToolbarFeature(),
+          InlineToolbarFeature(),
+        ],
       }),
       label: 'Intro Content',
+    },
+    {
+      name: 'secondaryContent',
+      type: 'checkbox',
+      label: 'Enable secondary content',
+    },
+    {
+      name: 'secondaryContentText',
+      type: 'richText',
+      label: 'Left Content Text',
+      admin: {
+        condition: (_, { secondaryContent }) => Boolean(secondaryContent),
+        description: '⚠️ This content is only visible for forms using the "contactus" style.',
+      },
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => [
+          ...rootFeatures,
+          HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
+          FixedToolbarFeature(),
+          InlineToolbarFeature(),
+        ],
+      }),
     },
   ],
   graphQL: {
