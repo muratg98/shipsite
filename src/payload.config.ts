@@ -16,7 +16,6 @@ import { Products } from './collections/Products'
 
 import { Footer } from './globals/Footer/config'
 import { Header } from './globals/Header/config'
-import { General } from './globals/General/config'
 
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -28,13 +27,24 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    meta: {
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/png',
+          url: '/favicon.ico',
+        },
+      ]
+    },
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
       beforeLogin: ['@/components/BeforeLogin'],
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      graphics: {
+        Logo: '@/components/AdminLogo',
+        Icon: '@/components/AdminLogo'
+      }
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -71,7 +81,7 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Media, Categories, User, Admins, Products],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, General],
+  globals: [Header, Footer],
   plugins: [
     ...plugins,
   ],

@@ -108,12 +108,10 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
-    general: General;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
-    general: GeneralSelect<false> | GeneralSelect<true>;
   };
   locale: null;
   user:
@@ -901,6 +899,7 @@ export interface Product {
   image?: string | null;
   prices?:
     | {
+        priceId?: string | null;
         currency?: string | null;
         type?: string | null;
         recurringInterval?: string | null;
@@ -1075,7 +1074,7 @@ export interface User {
   emailVerified: boolean;
   profileImage?: (string | null) | Media;
   subscription?: boolean | null;
-  customerId: string;
+  stripeCustomerId: string;
   stripeID?: string | null;
   skipSync?: boolean | null;
   updatedAt: string;
@@ -1819,7 +1818,7 @@ export interface UserSelect<T extends boolean = true> {
   emailVerified?: T;
   profileImage?: T;
   subscription?: T;
-  customerId?: T;
+  stripeCustomerId?: T;
   stripeID?: T;
   skipSync?: T;
   updatedAt?: T;
@@ -1862,6 +1861,7 @@ export interface ProductsSelect<T extends boolean = true> {
   prices?:
     | T
     | {
+        priceId?: T;
         currency?: T;
         type?: T;
         recurringInterval?: T;
@@ -2216,28 +2216,6 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "general".
- */
-export interface General {
-  id: string;
-  /**
-   * The name of your company.
-   */
-  companyName: string;
-  /**
-   * A brief description of your company.
-   */
-  companyDescription: string;
-  /**
-   * Select the industry your company operates in.
-   */
-  industry: 'technology' | 'finance' | 'healthcare' | 'education' | 'retail' | 'other';
-  isTrademarked: boolean;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2306,19 +2284,6 @@ export interface FooterSelect<T extends boolean = true> {
       };
   useBottomText?: T;
   bottomText?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "general_select".
- */
-export interface GeneralSelect<T extends boolean = true> {
-  companyName?: T;
-  companyDescription?: T;
-  industry?: T;
-  isTrademarked?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

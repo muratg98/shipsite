@@ -5,9 +5,12 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { useState } from 'react'
 import { Product, PricingBlock as PricingBlockProp } from '@/payload-types'
+import { authClient } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
 
 export const PricingBlock = ({ plans, header, title, description }: PricingBlockProp) => {
   const [billingCycle, setBillingCycle] = useState<'M' | 'A'>('M')
+  const router = useRouter();
 
   return (
     <section className="relative w-full p-4 overflow-hidden text-black text-center lg:px-2 -mt-24">
@@ -75,7 +78,19 @@ export const PricingBlock = ({ plans, header, title, description }: PricingBlock
               </AnimatePresence>
               <motion.button
                 whileTap={{ scale: 0.985 }}
-                onClick={() => window.open('#')}
+                onClick={async () => {
+                  const {error} = await authClient.subscription.upgrade({
+                    plan: product.name || '',
+                    successUrl: "/dashboard",
+                    cancelUrl: "/",
+                    annual: billingCycle==="A",
+                  });
+                  if (error?.status === 401 || error?.message?.toLowerCase().includes("unauthorized")) {
+                    router.push('/sign-in')
+                  } else {
+                    console.error("Stripe error:", error);
+                  }
+                }}
                 className="mt-8 w-full rounded-lg bg-indigo-600 py-2 text-sm font-medium text-white hover:bg-indigo-600/90"
               >
                 Subscribe

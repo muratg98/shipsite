@@ -76,6 +76,13 @@ export const Products: CollectionConfig = {
       },
       fields: [
         {
+          name: 'priceId',
+          type: 'text',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
           name: 'currency',
           type: 'text',
           admin: {
@@ -111,18 +118,18 @@ export const Products: CollectionConfig = {
       async ({ data }) => {
         const stripeProductID = data.stripeProductID;
         const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-        const stripe = new Stripe(stripeSecretKey, {
-          apiVersion: '2022-08-01',
-        });
+        const stripe = new Stripe(stripeSecretKey);
 
         try {
           const product = await stripe.products.retrieve(stripeProductID);
           const price = await stripe.prices.list({
             product: stripeProductID,
           });
+
           const pricesData = price.data.map((priceItem) => {
             const amount = priceItem.unit_amount !== null ? priceItem.unit_amount / 100 : 0;
             return {
+              priceId: priceItem.id,
               currency: priceItem.currency,
               type: priceItem.type,
               recurringInterval: priceItem.recurring?.interval || '', 
@@ -134,7 +141,7 @@ export const Products: CollectionConfig = {
             ...data,
             name: product.name,
             description: product.description,
-            features: product.features || [],
+            features: product.marketing_features || [],
             metadata: product.metadata || {},
             image: product.images && product.images.length > 0 ? product.images[0] : '',
             prices: pricesData, 

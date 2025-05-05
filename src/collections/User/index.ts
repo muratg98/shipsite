@@ -47,7 +47,7 @@ export const User: CollectionConfig = {
       required: false,
     },
     {
-      name: 'customerId',
+      name: 'stripeCustomerId',
       type: 'text',
       required: true
     }

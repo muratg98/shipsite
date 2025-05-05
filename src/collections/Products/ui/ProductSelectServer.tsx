@@ -14,7 +14,6 @@ const ProductSelectServer: TextFieldServerComponent = async (props) => {
       stripeMethod: 'products.list',
       stripeArgs: [{ limit: 100 }], 
     })
-
     if (res && Array.isArray(res.data.data) && res.data.data.length > 0) {
       options = res.data.data.map((item: { id: string; name?: string }) => ({
         label: item.name || item.id,

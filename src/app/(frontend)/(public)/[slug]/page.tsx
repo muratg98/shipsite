@@ -73,8 +73,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       if (block.blockType === 'pricing' && block.plans) {
         const fullPlans = await Promise.all(
           block.plans.map(async (plan) => {
-            const productId =
-              typeof plan.product === 'string' ? plan.product : plan.product.id;
+            const productId = typeof plan.product === 'string' ? plan.product : plan.product.id;
 
             const product = await payload.findByID({
               collection: 'products',
@@ -93,7 +92,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           plans: fullPlans, 
         };
       }
-      return block; // Return the block unmodified if it's not a pricing block
+      return block;
     })
   );
 

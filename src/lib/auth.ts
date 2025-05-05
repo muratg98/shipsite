@@ -6,9 +6,12 @@ import configPromise from '@payload-config'
 import { magicLink } from "better-auth/plugins";
 import { createAuthMiddleware } from "better-auth/api";
 import Stripe from "stripe";
+import { stripe } from "@better-auth/stripe"
 
 const client = new MongoClient(process.env.DATABASE_URI);
 const db = client.db()
+
+const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export const auth = betterAuth({
     database: mongodbAdapter(db),
@@ -56,6 +59,52 @@ export const auth = betterAuth({
             });
           }
       }),
+        stripe({
+            stripeClient,
+            stripeWebhookSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET!,
+            createCustomerOnSignUp: true,
+            subscription: {
+                enabled: true,
+                plans: async () => {
+                    const payload = await getPayload({ config: configPromise });
+                    const { docs: products } = await payload.find({
+                      collection: 'products',
+                      limit: 100,
+                    });
+
+                  
+                    return products
+                      .filter(product => product.name && Array.isArray(product.prices) && product.prices.length > 0 )
+                      .map(product => {
+
+                        const priceInfo: { priceId?: string; annualDiscountPriceId?: string } = {};      
+                        for (const price of product.prices!) {
+                            const interval = price.recurringInterval?.toLowerCase();
+                            const currentPriceId = price.priceId;
+                            if (typeof currentPriceId === 'string') {
+                              if (interval === 'month') {
+                                priceInfo.priceId = currentPriceId;
+                              } else if (interval === 'year') {
+                                priceInfo.annualDiscountPriceId = currentPriceId;
+                              }
+                            }
+                          }
+
+                  
+                        return {
+                          name: product.name as string,
+                          ...priceInfo,
+                          limits: Object.entries(product.metadata || {}).reduce((acc, [key, value]) => {
+                            const num = Number(value);
+                            if (!isNaN(num)) acc[key] = num;
+                            return acc;
+                          }, {} as Record<string, number>),
+                        };
+                      })
+                      .filter(plan => !!plan.priceId);
+                  }
+            }
+        }) 
     ],
     socialProviders: {
         github: {
@@ -98,7 +147,6 @@ export const auth = betterAuth({
         before: createAuthMiddleware(async (ctx) => {
             const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
             const stripe = new Stripe(stripeSecretKey, {
-            apiVersion: '2022-08-01',
             });
             if (ctx.body && ctx.body.email) {
                 const customer = await stripe.customers.create({

@@ -18,6 +18,8 @@ export default async function ProtectedLayout({
       return redirect("/sign-in");
     }
 
+    // if using subscribers, can add further checks to direct depending on subscription level
+
     return children;
   } catch (error: any) {
     console.error("Error fetching session:", error);
