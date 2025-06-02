@@ -45,7 +45,8 @@ export const FeaturesBlock: React.FC<FeaturesSectionBlock> = ({
   description,
   features,
   image = '',
-  layout
+  layout,
+  blockName
 }) => {
     const mappedFeatures: Feature[] = (features ?? []).map((feature, index) => ({
     ...feature,
@@ -60,6 +61,7 @@ export const FeaturesBlock: React.FC<FeaturesSectionBlock> = ({
       description={description ?? ''}
       features={mappedFeatures}
       image={image}
+      blockName={blockName || ''}
     />
   ) : (
     <Standard
@@ -67,6 +69,7 @@ export const FeaturesBlock: React.FC<FeaturesSectionBlock> = ({
       title={title}
       description={description ?? ''}
       features={mappedFeatures}
+      blockName={blockName || ''}
     />
   );
 };

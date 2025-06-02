@@ -5,9 +5,9 @@ import { Media } from '@/components/Media';
 import { TeamBlock as TeamBlockType } from '@/payload-types';
 import RichText from '@/components/RichText';
 
-export const TeamBlock = ({ title, description, teamMembers, header }: TeamBlockType) => {
+export const TeamBlock = ({ title, description, teamMembers, header, blockName }: TeamBlockType) => {
   return (
-    <div className="p-4">
+    <div className="p-4" id={blockName||undefined}>
       <div className="max-w-5xl max-lg:max-w-2xl mx-auto">
         <motion.div
           className="mx-auto max-w-4xl lg:text-center pb-24"

@@ -63,5 +63,5 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
       indent: 0,
       version: 1,
     },
-  },
+  }
 }

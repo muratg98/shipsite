@@ -13,6 +13,11 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { stripePlugin } from '@payloadcms/plugin-stripe'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
+import type { Config } from '@/payload-types'
+import { isSuperAdmin } from '@/access/isSuperAdmin'
+import { getUserTenantIDs } from '@/utilities/getUserTenantID'
+import { s3Storage } from '@payloadcms/storage-s3'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -96,7 +101,7 @@ export const plugins: Plugin[] = [
     stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET,
     sync: [
       {
-        collection: 'user',
+        collection: 'admins',
         stripeResourceType: 'customers',
         stripeResourceTypeSingular: 'customer',
         fields: [
@@ -108,16 +113,53 @@ export const plugins: Plugin[] = [
       },
     ],
     webhooks: {
-      'customer.subscription.updated': async ({ event, stripe, config }) => {
-        
-        const subscription = event.data.object; // The subscription object
+      'customer.subscription.updated': async ({ event, stripe, config, payload }) => {
+        console.log("CHECK WE ACC HERE THO STILL:");
+        const subscription = event.data.object;
 
-        const userId = subscription.customer; // Assuming you stored the Stripe customer ID in your user collection
-        const subscriptionStatus = subscription.status; // 'active', 'past_due', 'canceled', etc.
-        const planName = subscription.items.data[0].plan.nickname; // The subscription plan's name
-        const startDate = new Date(subscription.start_date * 1000); // Convert from Unix timestamp
-        const endDate = new Date(subscription.current_period_end * 1000); // Convert from Unix timestamp
+        await payload.update({
+          collection: 'user',
+          where: { 'stripe.stripeCustomerId': subscription.customer },
+          data: {
+              subscriptionId: subscription.id,
+              status: subscription.status,
+              planName: subscription.items.data[0]?.plan?.nickname || 'Unknown',
+              currency: subscription.currency,
+              startDate: subscription.start_date
+                ? new Date(subscription.start_date * 1000).toISOString()
+                : null,
+              renewalDate: subscription.current_period_end
+                ? new Date(subscription.current_period_end * 1000).toISOString()
+                : null,
+              cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            },
+          
+        });
 
+      },
+      'customer.subscription.created': async ({ event, stripe, config, payload }) => {
+        const subscription = event.data.object;
+        console.log("CHECK WE ACC HERE THO STILL222222242432:", subscription);
+
+        const createcus= await payload.update({
+          collection: 'user',
+          where: { 'stripe.stripeCustomerId': subscription.customer },
+          data: {
+              subscriptionId: subscription.id,
+              status: subscription.status,
+              planName: subscription.items.data[0]?.plan?.nickname || 'Unknown',
+              currency: subscription.currency,
+              startDate: subscription.start_date
+                ? new Date(subscription.start_date * 1000).toISOString()
+                : null,
+              renewalDate: subscription.current_period_end
+                ? new Date(subscription.current_period_end * 1000).toISOString()
+                : null,
+              cancelAtPeriodEnd: subscription.cancel_at_period_end,
+            },
+          
+        });
+        console.log("check create cus: ", createcus);
       },
       'customer.subscription.deleted': ({ event, stripe, config }) => {
         // do something...
@@ -128,4 +170,48 @@ export const plugins: Plugin[] = [
       
     },
   }),
+   multiTenantPlugin<Config>({
+      collections: {
+        pages: {},
+        categories: {},
+        user: {},
+        products: {},
+        posts: {},
+        media: {},
+        forms: {},
+        tenantHeader: {isGlobal: true}
+      },
+  
+      tenantField: {
+        access: {
+          read: () => true,
+          update: ({ req }) => {
+            if (isSuperAdmin(req.user)) {
+              return true
+            }
+            return getUserTenantIDs(req.user).length > 0
+          },
+        },
+      },
+      tenantsArrayField: {
+        includeDefaultField: false,
+      },
+      userHasAccessToAllTenants: (user) => isSuperAdmin(user),
+    }),
+  s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.SUPABASE_S3_BUCKET!,
+      config: {
+        credentials: {
+          accessKeyId: process.env.SUPABASE_S3_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.SUPABASE_S3_ACCESS_KEY_SECRET!,
+        },
+        region: process.env.SUPABASE_S3_REGION!,
+        endpoint: process.env.SUPABASE_S3_ENDPOINT!,
+        forcePathStyle: true
+        // ... Other S3 configuration
+      },
+    }),
 ]

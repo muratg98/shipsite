@@ -13,6 +13,9 @@ import { Posts } from './collections/Posts'
 import { User } from './collections/User'
 import { Admins } from './collections/Admins'
 import { Products } from './collections/Products'
+import { Tenants } from './collections/Tenants'
+
+import { TenantHeader } from './collections/TenantHeader'
 
 import { Footer } from './globals/Footer/config'
 import { Header } from './globals/Header/config'
@@ -79,7 +82,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
     autoPluralization: false
   }),
-  collections: [Pages, Posts, Media, Categories, User, Admins, Products],
+  collections: [Pages, Posts, Media, Categories, User, Admins, Products, Tenants, TenantHeader],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

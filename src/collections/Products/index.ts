@@ -152,6 +152,7 @@ export const Products: CollectionConfig = {
         }
       },
     ],
+    
   },
   timestamps: true,
 };

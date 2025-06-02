@@ -75,6 +75,8 @@ export interface Config {
     user: User;
     admins: Admin;
     products: Product;
+    tenants: Tenant;
+    tenantHeader: TenantHeader;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -93,6 +95,8 @@ export interface Config {
     user: UserSelect<false> | UserSelect<true>;
     admins: AdminsSelect<false> | AdminsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    tenants: TenantsSelect<false> | TenantsSelect<true>;
+    tenantHeader: TenantHeaderSelect<false> | TenantHeaderSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -174,6 +178,7 @@ export interface AdminAuthOperations {
  */
 export interface Page {
   id: string;
+  tenant?: (string | null) | Tenant;
   title: string;
   hero: {
     type: 'none' | 'simpleImpact' | 'simpleWithImage' | 'sliderHero';
@@ -279,10 +284,33 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants".
+ */
+export interface Tenant {
+  id: string;
+  name: string;
+  /**
+   * Used for domain-based tenant handling
+   */
+  domain?: string | null;
+  /**
+   * Used for url paths, example: /tenant-slug/page-slug
+   */
+  slug: string;
+  /**
+   * If checked, logging in is not required to read. Useful for building public pages.
+   */
+  allowPublicRead?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: string;
+  tenant?: (string | null) | Tenant;
   alt?: string | null;
   caption?: {
     root: {
@@ -375,6 +403,7 @@ export interface Media {
  */
 export interface Post {
   id: string;
+  tenant?: (string | null) | Tenant;
   title: string;
   heroImage?: (string | null) | Media;
   content: {
@@ -422,6 +451,7 @@ export interface Post {
  */
 export interface Category {
   id: string;
+  tenant?: (string | null) | Tenant;
   title: string;
   slug?: string | null;
   slugLock?: boolean | null;
@@ -444,6 +474,16 @@ export interface Category {
 export interface Admin {
   id: string;
   name: string;
+  roles?: ('super-admin' | 'user')[] | null;
+  tenants?:
+    | {
+        tenant: string | Tenant;
+        roles: ('tenant-admin' | 'tenant-viewer')[];
+        id?: string | null;
+      }[]
+    | null;
+  stripeID?: string | null;
+  skipSync?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -652,6 +692,7 @@ export interface FormBlock {
  */
 export interface Form {
   id: string;
+  tenant?: (string | null) | Tenant;
   title: string;
   fields?:
     | (
@@ -878,6 +919,7 @@ export interface PricingBlock {
  */
 export interface Product {
   id: string;
+  tenant?: (string | null) | Tenant;
   stripeProductID: string;
   name?: string | null;
   description?: string | null;
@@ -1069,14 +1111,70 @@ export interface TeamBlock {
  */
 export interface User {
   id: string;
+  tenant?: (string | null) | Tenant;
   name: string;
   email: string;
   emailVerified: boolean;
   profileImage?: (string | null) | Media;
-  subscription?: boolean | null;
   stripeCustomerId: string;
-  stripeID?: string | null;
-  skipSync?: boolean | null;
+  subscriptionId?: string | null;
+  status?: string | null;
+  planName?: string | null;
+  currency?: string | null;
+  startDate?: string | null;
+  renewalDate?: string | null;
+  cancelAtPeriodEnd?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenantHeader".
+ */
+export interface TenantHeader {
+  id: string;
+  tenant?: (string | null) | Tenant;
+  navItems?:
+    | {
+        link: {
+          type?: ('reference' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  showCTA?: boolean | null;
+  CallToAction?: {
+    link: {
+      type?: ('reference' | 'custom') | null;
+      newTab?: boolean | null;
+      reference?:
+        | ({
+            relationTo: 'pages';
+            value: string | Page;
+          } | null)
+        | ({
+            relationTo: 'posts';
+            value: string | Post;
+          } | null);
+      url?: string | null;
+      label: string;
+    };
+  };
+  Styles: {
+    media: string | Media;
+  };
   updatedAt: string;
   createdAt: string;
 }
@@ -1281,6 +1379,14 @@ export interface PayloadLockedDocument {
         value: string | Product;
       } | null)
     | ({
+        relationTo: 'tenants';
+        value: string | Tenant;
+      } | null)
+    | ({
+        relationTo: 'tenantHeader';
+        value: string | TenantHeader;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1357,6 +1463,7 @@ export interface PayloadMigration {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   hero?:
     | T
@@ -1669,6 +1776,7 @@ export interface TeamBlockSelect<T extends boolean = true> {
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   heroImage?: T;
   content?: T;
@@ -1700,6 +1808,7 @@ export interface PostsSelect<T extends boolean = true> {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  tenant?: T;
   alt?: T;
   caption?: T;
   updatedAt?: T;
@@ -1793,6 +1902,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   slug?: T;
   slugLock?: T;
@@ -1813,14 +1923,19 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "user_select".
  */
 export interface UserSelect<T extends boolean = true> {
+  tenant?: T;
   name?: T;
   email?: T;
   emailVerified?: T;
   profileImage?: T;
-  subscription?: T;
   stripeCustomerId?: T;
-  stripeID?: T;
-  skipSync?: T;
+  subscriptionId?: T;
+  status?: T;
+  planName?: T;
+  currency?: T;
+  startDate?: T;
+  renewalDate?: T;
+  cancelAtPeriodEnd?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1830,6 +1945,16 @@ export interface UserSelect<T extends boolean = true> {
  */
 export interface AdminsSelect<T extends boolean = true> {
   name?: T;
+  roles?: T;
+  tenants?:
+    | T
+    | {
+        tenant?: T;
+        roles?: T;
+        id?: T;
+      };
+  stripeID?: T;
+  skipSync?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1847,6 +1972,7 @@ export interface AdminsSelect<T extends boolean = true> {
  * via the `definition` "products_select".
  */
 export interface ProductsSelect<T extends boolean = true> {
+  tenant?: T;
   stripeProductID?: T;
   name?: T;
   description?: T;
@@ -1873,6 +1999,60 @@ export interface ProductsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenants_select".
+ */
+export interface TenantsSelect<T extends boolean = true> {
+  name?: T;
+  domain?: T;
+  slug?: T;
+  allowPublicRead?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tenantHeader_select".
+ */
+export interface TenantHeaderSelect<T extends boolean = true> {
+  tenant?: T;
+  navItems?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
+  showCTA?: T;
+  CallToAction?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              url?: T;
+              label?: T;
+            };
+      };
+  Styles?:
+    | T
+    | {
+        media?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -1892,6 +2072,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  * via the `definition` "forms_select".
  */
 export interface FormsSelect<T extends boolean = true> {
+  tenant?: T;
   title?: T;
   fields?:
     | T

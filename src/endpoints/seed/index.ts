@@ -1,30 +1,20 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
-import { contactForm as contactFormData } from './contact-form'
-import { contact as contactPageData } from './contact-page'
 import { home } from './home'
-import { image1 } from './image-1'
+import { shipshiplogo1 } from './shipshiplogo-1'
 import { image2 } from './image-2'
 import { imageHero1 } from './image-hero-1'
-import { post1 } from './post-1'
-import { post2 } from './post-2'
-import { post3 } from './post-3'
+import { userplaceholderimage } from './userplaceholderimage'
+import { aboutusimage } from './aboutusimage'
+import { contactusimage } from './contactusimage'
+import { aboutus } from './aboutus'
+import { contactus } from './contactus'
+import { termsofservice } from './termsofservice'
+import { privacypolicy } from './privacypolicy'
 
-const collections: CollectionSlug[] = [
-  'categories',
-  'media',
-  'pages',
-  'posts',
-  'forms',
-  'form-submissions',
-  'search',
-]
+const collections: CollectionSlug[] = ['media', 'pages']
 const globals: GlobalSlug[] = ['header', 'footer']
 
-// Next.js revalidation errors are normal when seeding the database without a server running
-// i.e. running `yarn seed` locally instead of using the admin UI within an active app
-// The app is not running to revalidate the pages and so the API routes are not available
-// These error messages can be ignored: `Error hitting revalidate route for...`
 export const seed = async ({
   payload,
   req,
@@ -34,77 +24,50 @@ export const seed = async ({
 }): Promise<void> => {
   payload.logger.info('Seeding database...')
 
-  // we need to clear the media directory before seeding
-  // as well as the collections and globals
-  // this is because while `yarn seed` drops the database
-  // the custom `/api/seed` endpoint does not
   payload.logger.info(`— Clearing collections and globals...`)
 
   await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
+    collections.map((collection) => payload.db.deleteMany({ collection, where: {} })),
   )
 
   await Promise.all(
-    globals.map((global) => payload.db.globals.deleteMany({ global, req, where: {} })),
+    globals.map((global) => payload.db.globals.deleteMany({ global, where: {} })),
   )
 
   await Promise.all(
     collections
       .filter((collection) => Boolean(payload.collections[collection].config.versions))
-      .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
+      .map((collection) => payload.db.deleteVersions({ collection, where: {} })),
   )
-
-  payload.logger.info(`— Seeding demo author and user...`)
-
-  await payload.delete({
-    collection: 'admins',
-    depth: 0,
-    where: {
-      email: {
-        equals: 'demo-author@example.com',
-      },
-    },
-  })
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
+  const [shipshiplogo1Buffer, image2Buffer, hero1Buffer, personplaceholderBuffer, aboutUsBuffer, contactUsBuffer] = await Promise.all([
     fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
+      'https://github.com/muratg98/shipsite/blob/master/public/shipshiplogo-1.png?raw=true',
     ),
     fetchFileByURL(
       'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
     ),
     fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
+      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
     ),
     fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
+      'https://github.com/muratg98/shipsite/blob/master/public/personplaceholder.jpg?raw=true',
+    ),
+    fetchFileByURL(
+      'https://github.com/muratg98/shipsite/blob/master/public/about-us-img.png?raw=true',
+    ),
+    fetchFileByURL(
+      'https://github.com/muratg98/shipsite/blob/master/public/contactusimage.png?raw=true',
     ),
   ])
 
-  const [
-    demoAuthor,
-    image1Doc,
-    image2Doc,
-    image3Doc,
-    imageHomeDoc,
-    technologyCategory,
-    newsCategory,
-    financeCategory,
-  ] = await Promise.all([
-    payload.create({
-      collection: 'admins',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'password',
-      },
-    }),
+  const [image1Doc, image2Doc, imageHeroDoc, userplaceholderDoc, aboutusDoc, contactusDoc] = await Promise.all([
     payload.create({
       collection: 'media',
-      data: image1,
-      file: image1Buffer,
+      data: shipshiplogo1,
+      file: shipshiplogo1Buffer,
     }),
     payload.create({
       collection: 'media',
@@ -113,214 +76,212 @@ export const seed = async ({
     }),
     payload.create({
       collection: 'media',
-      data: image2,
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
       data: imageHero1,
       file: hero1Buffer,
     }),
-
     payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Technology',
-        breadcrumbs: [
-          {
-            label: 'Technology',
-            url: '/technology',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'News',
-        breadcrumbs: [
-          {
-            label: 'News',
-            url: '/news',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Finance',
-        breadcrumbs: [
-          {
-            label: 'Finance',
-            url: '/finance',
-          },
-        ],
-      },
+      collection: 'media',
+      data: userplaceholderimage,
+      file: personplaceholderBuffer,
     }),
     payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Design',
-        breadcrumbs: [
-          {
-            label: 'Design',
-            url: '/design',
-          },
-        ],
-      },
+      collection: 'media',
+      data: aboutusimage,
+      file: aboutUsBuffer,
     }),
-
     payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Software',
-        breadcrumbs: [
-          {
-            label: 'Software',
-            url: '/software',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Engineering',
-        breadcrumbs: [
-          {
-            label: 'Engineering',
-            url: '/engineering',
-          },
-        ],
-      },
+      collection: 'media',
+      data: contactusimage,
+      file: contactUsBuffer,
     }),
   ])
-
-  let demoAuthorID: number | string = demoAuthor.id
 
   let image1ID: number | string = image1Doc.id
   let image2ID: number | string = image2Doc.id
-  let image3ID: number | string = image3Doc.id
-  let imageHomeID: number | string = imageHomeDoc.id
+  let imageHeroID: number | string = imageHeroDoc.id
+  let userplaceholderimgID: number | string = userplaceholderDoc.id
+  let aboutusimgID: number | string = aboutusDoc.id
+  let contactusimgID: number | string = contactusDoc.id
 
   if (payload.db.defaultIDType === 'text') {
-    image1ID = `"${image1Doc.id}"`
-    image2ID = `"${image2Doc.id}"`
-    image3ID = `"${image3Doc.id}"`
-    imageHomeID = `"${imageHomeDoc.id}"`
-    demoAuthorID = `"${demoAuthorID}"`
+    image1ID = `"${image1ID}"`
+    image2ID = `"${image2ID}"`
+    imageHeroID = `"${imageHeroID}"`
+    userplaceholderimgID = `"${userplaceholderimgID}"`
+    aboutusimgID  = `"${aboutusimgID}"`
+    contactusimgID  = `"${contactusimgID}"`
   }
+  
+  payload.logger.info(`— Seeding newsletter form...`)
 
-  payload.logger.info(`— Seeding posts...`)
-
-  // Do not create posts with `Promise.all` because we want the posts to be created in order
-  // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const post1Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: JSON.parse(
-      JSON.stringify({ ...post1, categories: [technologyCategory.id] })
-        .replace(/"\{\{IMAGE_1\}\}"/g, String(image1ID))
-        .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID))
-        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
-    ),
-  })
-
-  const post2Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: JSON.parse(
-      JSON.stringify({ ...post2, categories: [newsCategory.id] })
-        .replace(/"\{\{IMAGE_1\}\}"/g, String(image2ID))
-        .replace(/"\{\{IMAGE_2\}\}"/g, String(image3ID))
-        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
-    ),
-  })
-
-  const post3Doc = await payload.create({
-    collection: 'posts',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: JSON.parse(
-      JSON.stringify({ ...post3, categories: [financeCategory.id] })
-        .replace(/"\{\{IMAGE_1\}\}"/g, String(image3ID))
-        .replace(/"\{\{IMAGE_2\}\}"/g, String(image1ID))
-        .replace(/"\{\{AUTHOR\}\}"/g, String(demoAuthorID)),
-    ),
-  })
-
-  // update each post with related posts
-  await payload.update({
-    id: post1Doc.id,
-    collection: 'posts',
+  const newsletterForm = await payload.create({
+    collection: 'forms',
     data: {
-      relatedPosts: [post2Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post2Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post3Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post2Doc.id],
+      title: 'Newsletter',
+      fields: [
+        {
+          blockType: 'email',
+          name: 'email',
+          label: 'Email',
+        },
+      ],
+      confirmationType: 'message',
+      confirmationMessage: {
+        root: {
+          children: [
+            {
+              children: [
+                {
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Thank you for subscribing to our newsletter.',
+                  type: 'text',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'paragraph',
+              version: 1,
+              textFormat: 0,
+              textStyle: '',
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
+        },
+      },
+      formStyle: 'newsletter',
     },
   })
 
-  payload.logger.info(`— Seeding contact form...`)
-
+  payload.logger.info(`— Seeding contact us form...`)
+  
   const contactForm = await payload.create({
     collection: 'forms',
+    data: {
+      title: 'Contact Us',
+      fields: [
+        {
+          blockType: 'text',
+          name: 'name',
+          label: 'Name',
+        },
+        {
+          blockType: 'email',
+          name: 'email',
+          label: 'Email',
+        },
+        {
+          blockType: 'text',
+          name: 'subject',
+          label: 'Subject',
+        },
+        {
+          blockType: 'textarea',
+          name: 'content',
+          label: 'Content',
+        },
+      ],
+      confirmationType: 'message',
+      confirmationMessage: {
+        root: {
+          children: [
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  type: 'text',
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: '',
+                  text: 'Your email has been submitted, we will get back to you as soon as possible.',
+                  version: 1,
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              version: 1,
+              textFormat: 0,
+              textStyle: '',
+            },
+          ],
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          type: 'root',
+          version: 1,
+        },
+      },
+      formStyle: 'contact',
+      emails: [],
+    },
+  });
+  
+  payload.logger.info(`— Seeding home page...`)
+  
+  const homePage = await payload.create({
+    collection: 'pages',
     depth: 0,
-    data: JSON.parse(JSON.stringify(contactFormData)),
+    data: JSON.parse(
+      JSON.stringify(home)
+      .replace(/"\{\{FORM_ID\}\}"/g, `"${newsletterForm.id}"`)
+      .replace(/"\{\{IMAGE_1\}\}"/g, imageHeroID)
+      .replace(/"\{\{IMAGE_2\}\}"/g, image2ID)
+      .replace(/"\{\{IMAGE_LOGO\}\}"/g, image1ID)
+      .replace(/"\{\{ZIGZAG_IMAGE\}\}"/g, image2ID)
+      .replace(/"\{\{REVIEW_IMG_PLACEHOLDER\}\}"/g, userplaceholderimgID)
+    ),
   })
 
-  let contactFormID: number | string = contactForm.id
+  payload.logger.info(`— Seeding About Us page...`)
 
-  if (payload.db.defaultIDType === 'text') {
-    contactFormID = `"${contactFormID}"`
-  }
+  const aboutusPage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: JSON.parse(
+      JSON.stringify(aboutus)
+      .replace(/"\{\{ABOUTUS_IMAGE\}\}"/g, aboutusimgID)
+      .replace(/"\{\{PLACEHOLDER_IMAGE\}\}"/g, userplaceholderimgID)
+      .replace(/"\{\{CONTACTUS_FORMID\}\}"/g, `"${contactForm.id}"`)
+    ),
+  })
 
-  payload.logger.info(`— Seeding pages...`)
+  payload.logger.info(`— Seeding Contact Us page...`)
 
-  const [_, contactPage] = await Promise.all([
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      data: JSON.parse(
-        JSON.stringify(home)
-          .replace(/"\{\{IMAGE_1\}\}"/g, String(imageHomeID))
-          .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID)),
-      ),
-    }),
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      data: JSON.parse(
-        JSON.stringify(contactPageData).replace(
-          /"\{\{CONTACT_FORM_ID\}\}"/g,
-          String(contactFormID),
-        ),
-      ),
-    }),
-  ])
+  const contactusPage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: JSON.parse(
+      JSON.stringify(contactus)
+      .replace(/"\{\{CONTACTUS_HERO_IMAGE\}\}"/g, contactusimgID)
+      .replace(/"\{\{CONTACTUS_FORM\}\}"/g, `"${contactForm.id}"`)
+    ),
+  })
+
+  payload.logger.info(`— Seeding Privacy Policy page...`)
+
+  const privacypolicyPage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: privacypolicy,
+  })
+
+  payload.logger.info(`— Seeding Terms of Service page...`)
+
+  const termsofservicePage = await payload.create({
+    collection: 'pages',
+    depth: 0,
+    data: termsofservice,
+  })
 
   payload.logger.info(`— Seeding globals...`)
 
@@ -331,55 +292,163 @@ export const seed = async ({
         navItems: [
           {
             link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
+              type: 'reference',
+              reference: {
+                relationTo: 'pages',
+                value: aboutusPage.id,
+              },
+              label: 'About Us',
             },
           },
           {
             link: {
               type: 'reference',
-              label: 'Contact',
               reference: {
                 relationTo: 'pages',
-                value: contactPage.id,
+                value: contactusPage.id,
               },
+              label: 'Contact Us',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              url: '#Features',
+              label: 'Features',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              url: '#FAQ',
+              label: 'FAQ',
             },
           },
         ],
+        Styles: {
+          media: sanitizeID(image1ID),
+        },
+        CallToAction: {
+          link: {
+            type: 'custom',
+            url: 'dashboard',
+            label: 'Get Started',
+          },
+        },
+        showCTA: true,
       },
     }),
-    // payload.updateGlobal({
-    //   slug: 'footer',
-    //   data: {
-    //     navItems: [
-    //       {
-    //         link: {
-    //           type: 'custom',
-    //           label: 'Admin',
-    //           url: '/admin',
-    //         },
-    //       },
-    //       {
-    //         link: {
-    //           type: 'custom',
-    //           label: 'Source Code',
-    //           newTab: true,
-    //           url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-    //         },
-    //       },
-    //       {
-    //         link: {
-    //           type: 'custom',
-    //           label: 'Payload',
-    //           newTab: true,
-    //           url: 'https://payloadcms.com/',
-    //         },
-    //       },
-    //     ],
-    //   },
-    // }),
   ])
+
+  await payload.updateGlobal({
+    slug: 'footer',
+    data: {
+      navSections: [
+        {
+          name: 'Useful links',
+          navItems: [
+            {
+              link: {
+                type: 'custom',
+                reference: {
+                  relationTo: 'pages',
+                  value: homePage.id,
+                },
+                url: '#FAQ',
+                label: 'Frequently Asked Questions',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
+                reference: {
+                  relationTo: 'pages',
+                  value: homePage.id,
+                },
+                url: '#Features',
+                label: 'Features',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
+                reference: {
+                  relationTo: 'pages',
+                  value: homePage.id,
+                },
+                url: '#Testimonials',
+                label: 'Testimonials',
+              },
+            },
+          ],
+        },
+        {
+          name: 'Get to know',
+          navItems: [
+            {
+              link: {
+                type: 'reference',
+                reference: {
+                  relationTo: 'pages',
+                  value: homePage.id,
+                },
+                label: 'Home',
+              },
+            },
+            {
+              link: {
+                type: 'reference',
+                reference: {
+                  relationTo: 'pages',
+                  value: aboutusPage.id,
+                },
+                label: 'About Us',
+              },
+            },
+          ],
+        },
+        {
+          name: 'Help',
+          navItems: [
+            {
+              link: {
+                type: 'reference',
+                reference: {
+                  relationTo: 'pages',
+                  value: privacypolicyPage.id,
+                },
+                label: 'Privacy Page',
+              },
+            },
+            {
+              link: {
+                type: 'reference',
+                reference: {
+                  relationTo: 'pages',
+                  value: termsofservicePage.id,
+                },
+                label: 'Terms of Service',
+              },
+            },
+            {
+              link: {
+                type: 'reference',
+                reference: {
+                  relationTo: 'pages',
+                  value: contactusPage.id,
+                },
+                label: 'Contact Us',
+              },
+            },
+          ],
+        },
+      ],
+      useBottomText: true,
+      bottomText: 'Made fast and with love by ShipShip',
+      logo: sanitizeID(image1ID),
+    },
+  });
+  
 
   payload.logger.info('Seeded database successfully!')
 }
@@ -402,4 +471,11 @@ async function fetchFileByURL(url: string): Promise<File> {
     mimetype: `image/${url.split('.').pop()}`,
     size: data.byteLength,
   }
+}
+
+function sanitizeID(id: any): string {
+  if (typeof id === 'string') {
+    return id.replace(/^"|"$/g, '');
+  }
+  return id;
 }

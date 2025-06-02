@@ -13,6 +13,7 @@ export const SimpleImpactHero: React.FC<Page['hero']> = ({
   showTopText,
   media,
 }) => {
+
   return (
     <div className="relative flex flex-col overflow-hidden bg-gray-100">
       {/* Decorative vertical lines */}
@@ -47,7 +48,6 @@ export const SimpleImpactHero: React.FC<Page['hero']> = ({
                   <CMSLink
                     key={i}
                     {...link}
-                    className="transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900"
                   />
                 ))}
               </div>

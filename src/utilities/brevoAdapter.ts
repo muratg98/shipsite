@@ -1,11 +1,14 @@
 import { EmailAdapter, SendEmailOptions } from "payload";
 
 const brevoAdapter = (): EmailAdapter => {
+
   const adapter = () => ({
     name: "brevo",
     defaultFromName: process.env.BREVO_SENDER_NAME as string,
     defaultFromAddress: process.env.BREVO_SENDER_EMAIL as string,
     sendEmail: async (message: SendEmailOptions): Promise<unknown> => {
+      console.log(message);
+
       if(!process.env.BREVO_EMAILS_ACTIVE){
         console.log("Emails disabled, logging to console");
         console.log(message);
@@ -16,8 +19,8 @@ const brevoAdapter = (): EmailAdapter => {
             method: "POST",
             headers: {
               "api-key": process.env.BREVO_API_KEY as string,
-              "Content-Type": "application/json",
-              "Accept": "application/json"
+              "content-type": "application/json",
+              "accept": "application/json"
             },
             body: JSON.stringify({
               sender: {

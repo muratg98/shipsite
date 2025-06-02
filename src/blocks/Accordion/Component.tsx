@@ -13,11 +13,11 @@ const colsSpanClasses = {
   twoThirds: 'col-span-4 lg:col-span-8',
 };
 
-export const AccordionBlock: React.FC<AccordionBlockProp> = ({ size = 'full', items, header, title, description }) => {
+export const AccordionBlock: React.FC<AccordionBlockProp> = ({ size = 'full', items, header, title, description, blockName }) => {
   if (!items || items.length === 0) return null;
 
   return (
-    <div className="container my-16">
+    <div className="container my-16" id={blockName || undefined}>
       <motion.div
           className="mx-auto max-w-2xl lg:text-center pb-16"
           initial={{ opacity: 0, y: 30 }}

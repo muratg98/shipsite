@@ -15,6 +15,7 @@ interface StandardProps {
   title: string;
   description: string;
   features: Feature[];
+  blockName: string;
 }
 
 export default function Standard({
@@ -22,9 +23,10 @@ export default function Standard({
   title,
   description,
   features,
+  blockName,
 }: StandardProps) {
   return (
-    <div className="bg-white pb-12">
+    <div className="bg-white pb-12" id={blockName || undefined}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
 
         {/* Animated Heading */}

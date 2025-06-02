@@ -46,7 +46,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
     src = `${baseUrl}${url}?${cacheTag}`;
     // src = `${getClientSideURL()}${url}?${cacheTag}`
   }
-
+ 
   const loading = loadingFromProps || (!priority ? 'lazy' : undefined)
 
   // NOTE: this is used by the browser to determine which image to download at different screen sizes

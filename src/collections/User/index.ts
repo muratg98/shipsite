@@ -17,23 +17,23 @@ export const User: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: {
-    disableLocalStrategy: true
+    disableLocalStrategy: true,
   },
   fields: [
     {
       name: 'name',
       type: 'text',
-      required: true
+      required: true,
     },
     {
       name: 'email',
       type: 'text',
-      required: true
+      required: true,
     },
     {
       name: 'emailVerified',
       type: 'checkbox',
-      required: true
+      required: true,
     },
     {
       name: 'profileImage',
@@ -42,15 +42,70 @@ export const User: CollectionConfig = {
       required: false,
     },
     {
-      name: 'subscription',
-      type: 'checkbox',
-      required: false,
+      type: 'group',
+      label: 'Stripe Subscription',
+      fields: [
+        {
+          name: 'stripeCustomerId',
+          label: 'Customer ID',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'subscriptionId',
+          label: 'Subscription ID',
+          type: 'text',
+        },
+        {
+          name: 'status',
+          label: 'Subscription Status',
+          type: 'text',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'planName',
+          label: 'Plan Name',
+          type: 'text',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'currency',
+          label: 'Currency',
+          type: 'text',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'startDate',
+          label: 'Start Date',
+          type: 'date',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'renewalDate',
+          label: 'Renewal Date',
+          type: 'date',
+          admin: {
+            readOnly: true,
+          },
+        },
+        {
+          name: 'cancelAtPeriodEnd',
+          label: 'Will Cancel at Period End?',
+          type: 'checkbox',
+          admin: {
+            readOnly: true,
+          },
+        },
+      ],
     },
-    {
-      name: 'stripeCustomerId',
-      type: 'text',
-      required: true
-    }
   ],
   timestamps: true,
 }

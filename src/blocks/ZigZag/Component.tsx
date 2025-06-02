@@ -6,9 +6,9 @@ import RichText from '@/components/RichText';
 import { CMSLink } from '@/components/Link';
 import { ZigzagBlock } from '@/payload-types';
 
-export const ZigZagBlock = ({ content, header, title, description }: ZigzagBlock) => {
+export const ZigZagBlock = ({ content, header, title, description, blockName }: ZigzagBlock) => {
   return (
-    <div className="bg-white p-4">
+    <div className="bg-white p-4" id={blockName||undefined}>
         <motion.div
           className="mx-auto max-w-4xl lg:text-center pb-24"
           initial={{ opacity: 0, y: 30 }}
