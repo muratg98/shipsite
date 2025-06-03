@@ -444,6 +444,9 @@ export interface Category {
 export interface Admin {
   id: string;
   name: string;
+  roles?: ('super-admin' | 'admin')[] | null;
+  stripeID?: string | null;
+  skipSync?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1073,10 +1076,14 @@ export interface User {
   email: string;
   emailVerified: boolean;
   profileImage?: (string | null) | Media;
-  subscription?: boolean | null;
   stripeCustomerId: string;
-  stripeID?: string | null;
-  skipSync?: boolean | null;
+  subscriptionId?: string | null;
+  status?: string | null;
+  planName?: string | null;
+  currency?: string | null;
+  startDate?: string | null;
+  renewalDate?: string | null;
+  cancelAtPeriodEnd?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1817,10 +1824,14 @@ export interface UserSelect<T extends boolean = true> {
   email?: T;
   emailVerified?: T;
   profileImage?: T;
-  subscription?: T;
   stripeCustomerId?: T;
-  stripeID?: T;
-  skipSync?: T;
+  subscriptionId?: T;
+  status?: T;
+  planName?: T;
+  currency?: T;
+  startDate?: T;
+  renewalDate?: T;
+  cancelAtPeriodEnd?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1830,6 +1841,9 @@ export interface UserSelect<T extends boolean = true> {
  */
 export interface AdminsSelect<T extends boolean = true> {
   name?: T;
+  roles?: T;
+  stripeID?: T;
+  skipSync?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

@@ -143,28 +143,6 @@ export const auth = betterAuth({
             clientSecret: process.env.REDDIT_CLIENT_SECRET as string,
         },    
     },
-    hooks: {
-        before: createAuthMiddleware(async (ctx) => {
-            const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
-            const stripe = new Stripe(stripeSecretKey, {
-            });
-            if (ctx.body && ctx.body.email) {
-                const customer = await stripe.customers.create({
-                    email: ctx.body.email,
-                });
-
-                return {
-                    context: {
-                        ...ctx,
-                        body: {
-                            ...ctx.body,
-                            customerId: customer.id,
-                        },
-                    }
-                };
-            }
-        }),
-    }
 })
 
 type Session = typeof auth.$Infer.Session

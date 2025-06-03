@@ -8,12 +8,12 @@ import { Product, PricingBlock as PricingBlockProp } from '@/payload-types'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 
-export const PricingBlock = ({ plans, header, title, description }: PricingBlockProp) => {
+export const PricingBlock = ({ plans, header, title, description, blockName }: PricingBlockProp) => {
   const [billingCycle, setBillingCycle] = useState<'M' | 'A'>('M')
   const router = useRouter();
 
   return (
-    <section className="relative w-full p-4 overflow-hidden text-black text-center lg:px-2 -mt-24">
+    <section className="relative w-full p-4 overflow-hidden text-black text-center lg:px-2 -mt-24" id={blockName || undefined}>
       <motion.div
         className="relative z-10 my-12 flex flex-col items-center justify-center gap-4"
         initial={{ opacity: 0, y: 30 }}
@@ -45,7 +45,7 @@ export const PricingBlock = ({ plans, header, title, description }: PricingBlock
         </div>
       </motion.div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-row justify-center gap-x-3 gap-y-8 flex-wrap">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-row justify-center gap-x-3 gap-y-8 flex-wrap lg:flex-nowrap p-2">
         {plans.map((plan, index) => {
           const product = plan.product as Product
           const priceObj = product.prices?.find((p) => p.recurringInterval === (billingCycle === 'M' ? 'month' : 'year'))
@@ -54,7 +54,7 @@ export const PricingBlock = ({ plans, header, title, description }: PricingBlock
           return (
             <motion.div
               key={plan.id || index}
-              className="w-full sm:w-2/3 lg:basis-1/3 shrink-0 rounded-xl border-[1px] border-gray-300 p-6 text-left dark:border-gray-600"
+              className="w-full sm:w-1/2 lg:w-1/3 shrink-0 rounded-xl border-[1px] border-gray-300 p-6 text-left dark:border-gray-600"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}

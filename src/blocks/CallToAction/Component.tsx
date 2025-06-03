@@ -10,10 +10,11 @@ export const CallToActionBlock: React.FC<CTABlockProps> = ({
   links,
   useBackgroundImage,
   bgImage,
+  blockName
 }) => {
   return (
     // add container to class below
-    <div className="relative bg-indigo-800 text-white overflow-hidden">
+    <div className="relative bg-indigo-800 text-white overflow-hidden" id={blockName||undefined}>
       {useBackgroundImage && bgImage && (
         <Media
           resource={bgImage}

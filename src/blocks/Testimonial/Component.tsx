@@ -4,9 +4,9 @@ import { motion } from 'framer-motion';
 import { TestimonialBlock as TestimonialBlockType } from '@/payload-types';
 import { Media } from '@/components/Media';
 
-export const TestimonialBlock = ({ reviews, header, description, title }: TestimonialBlockType) => {
+export const TestimonialBlock = ({ reviews, header, description, title, blockName }: TestimonialBlockType) => {
   return (
-    <div className="p-4">
+    <div className="p-4" id={blockName || undefined}>
       <motion.div
         className="mx-auto max-w-4xl lg:text-center pb-4"
         initial={{ opacity: 0, y: 30 }}
