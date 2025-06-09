@@ -4,7 +4,11 @@ import React from 'react'
 
 import type { Header } from '@/payload-types'
 
-export async function Header({ tenantID }: { tenantID: string}) {
+type HeaderProps = {
+  tenantID: string
+}
+
+export async function Header({ tenantID }: HeaderProps) {
   const headerData = (await getCachedGlobalFromCollection('header', 'header', tenantID, 1)()) as Header
   const cleanedData = {
     ...headerData,

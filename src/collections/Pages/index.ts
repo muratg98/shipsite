@@ -1,6 +1,4 @@
 import type { CollectionConfig } from 'payload'
-
-import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
@@ -28,14 +26,18 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+import { addTenantSlug } from './hooks/addTenantSlug'
+import { validateSlugIsNotTenant } from './hooks/validateSlugIsNotTenant'
+import { superAdminOrTenantAdminAccess } from './access/superAdminOrTenantAdmin'
+import { superAdminTenantOrPublishedAccess } from './access/superAdminTenantOrPublishedAccess'
 
 export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
   access: {
-    create: authenticated,
-    delete: authenticated,
-    read: authenticatedOrPublished,
-    update: authenticated,
+    create: superAdminOrTenantAdminAccess,
+    delete: superAdminOrTenantAdminAccess,
+    read: superAdminTenantOrPublishedAccess,
+    update: superAdminOrTenantAdminAccess,
   },
   // This config controls what's populated by default when a page is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -136,6 +138,7 @@ export const Pages: CollectionConfig<'pages'> = {
     ...slugField(),
   ],
   hooks: {
+    beforeValidate: [validateSlugIsNotTenant, addTenantSlug],
     afterChange: [revalidatePage],
     beforeChange: [populatePublishedAt],
     afterDelete: [revalidateDelete],

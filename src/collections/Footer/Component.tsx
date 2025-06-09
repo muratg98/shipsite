@@ -4,12 +4,18 @@ import type { Footer } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { Media } from '@/components/Media'
 
-export async function Footer({ tenantID }: { tenantID: string}) {
+type FooterProps = {
+  tenantID: string
+}
+
+export async function Footer({ tenantID }: FooterProps) {
   const footerData = (await getCachedGlobalFromCollection('footer', 'footer', tenantID, 1)()) as Footer | null
-if (!footerData) {
+
+  if (!footerData) {
     console.warn('Missing footer data for tenant:', tenantID)
     return null
   }
+  
   return (
     <footer className="bg-gray-900 pt-12 pb-6 px-10 tracking-wide">
       <div className="max-w-screen-xl mx-auto">

@@ -7,6 +7,7 @@ import { magicLink } from "better-auth/plugins";
 import { createAuthMiddleware } from "better-auth/api";
 import Stripe from "stripe";
 import { stripe } from "@better-auth/stripe"
+import {tenancy} from 'payload-tenancy'
 
 const client = new MongoClient(process.env.DATABASE_URI);
 const db = client.db()

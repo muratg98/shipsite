@@ -4,6 +4,7 @@ import { authenticated } from '../../access/authenticated'
 import { APIError } from 'payload'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
 import { tenantsArrayField } from '@payloadcms/plugin-multi-tenant/fields'
+import { isTenantAdminOrSuperAdmin } from './access/adminAccessControl'
 
 class AdminPasswordError extends APIError {
   constructor(message: string) {
@@ -15,8 +16,10 @@ const defaultTenantArrayField = tenantsArrayField({
   tenantsArrayFieldName: 'tenants',
   tenantsArrayTenantFieldName: 'tenant',
   tenantsCollectionSlug: 'tenants',
-  arrayFieldAccess: {},
-  tenantFieldAccess: {},
+  arrayFieldAccess: {
+  },
+  tenantFieldAccess: {
+  },
   rowFields: [
     {
       name: 'roles',
@@ -25,6 +28,7 @@ const defaultTenantArrayField = tenantsArrayField({
       hasMany: true,
       options: ['tenant-admin', 'tenant-viewer'],
       required: true,
+      unique: true,
     },
   ],
 })
@@ -33,10 +37,10 @@ export const Admins: CollectionConfig = {
   slug: 'admins',
   access: {
     admin: authenticated,
-    create: authenticated,
-    delete: authenticated,
+    create: isTenantAdminOrSuperAdmin,
+    delete: isTenantAdminOrSuperAdmin,
     read: authenticated,
-    update: authenticated,
+    update: isTenantAdminOrSuperAdmin,
   },
   admin: {
     defaultColumns: ['name', 'email'],
@@ -72,6 +76,7 @@ export const Admins: CollectionConfig = {
         ...(defaultTenantArrayField?.admin || {}),
         position: 'sidebar',
       },
+      
     },
   ],
   hooks: {

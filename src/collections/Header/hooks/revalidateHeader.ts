@@ -2,7 +2,7 @@ import type { CollectionAfterChangeHook, CollectionAfterDeleteHook } from 'paylo
 
 import { revalidateTag } from 'next/cache'
 
-export const revalidateTenantHeader: CollectionAfterChangeHook = ({ doc, req: { payload, context } }) => {
+export const revalidateHeader: CollectionAfterChangeHook = ({ doc, req: { payload, context } }) => {
   if (!context.disableRevalidate) {
     payload.logger.info(`Revalidating header`)
 

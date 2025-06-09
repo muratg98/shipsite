@@ -1,10 +1,10 @@
 // header.ts (GlobalConfig)
 import type { CollectionConfig } from 'payload';
 import { link } from '@/fields/link';
-import { revalidateTenantHeader } from './hooks/revalidateTenantHeader';
+import { revalidateHeader } from './hooks/revalidateHeader';
 
-export const TenantHeader: CollectionConfig = {
-  slug: 'tenantHeader',
+export const Header: CollectionConfig = {
+  slug: 'header',
   access: {
     read: () => true,
   },
@@ -54,6 +54,6 @@ export const TenantHeader: CollectionConfig = {
     },
   ],
   hooks: {
-    afterChange: [revalidateTenantHeader],
+    afterChange: [revalidateHeader],
   },
 };

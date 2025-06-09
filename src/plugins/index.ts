@@ -13,11 +13,14 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { stripePlugin } from '@payloadcms/plugin-stripe'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import type { Config } from '@/payload-types'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
 import { getUserTenantIDs } from '@/utilities/getUserTenantID'
 import { s3Storage } from '@payloadcms/storage-s3'
+
+import {payloadBetterAuth} from '@payload-auth/better-auth-plugin'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
@@ -171,6 +174,7 @@ export const plugins: Plugin[] = [
     },
   }),
    multiTenantPlugin<Config>({
+    debug:true,
       collections: {
         pages: {},
         categories: {},
@@ -179,7 +183,8 @@ export const plugins: Plugin[] = [
         posts: {},
         media: {},
         forms: {},
-        tenantHeader: {isGlobal: true}
+        header: {isGlobal: true},
+        footer: {isGlobal: true}
       },
   
       tenantField: {
@@ -191,6 +196,12 @@ export const plugins: Plugin[] = [
             }
             return getUserTenantIDs(req.user).length > 0
           },
+          create: ({ req }) => {
+            if (isSuperAdmin(req.user)) {
+              return true
+            }
+            return getUserTenantIDs(req.user, 'tenant-admin').length > 0
+          }, 
         },
       },
       tenantsArrayField: {

@@ -15,10 +15,8 @@ import { Admins } from './collections/Admins'
 import { Products } from './collections/Products'
 import { Tenants } from './collections/Tenants'
 
-import { TenantHeader } from './collections/TenantHeader'
-
-import { Footer } from './globals/Footer/config'
-import { Header } from './globals/Header/config'
+import { Header } from './collections/Header'
+import { Footer } from './collections/Footer'
 
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -82,9 +80,8 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
     autoPluralization: false
   }),
-  collections: [Pages, Posts, Media, Categories, User, Admins, Products, Tenants, TenantHeader],
+  collections: [Pages, Posts, Media, Categories, User, Admins, Products, Tenants, Header, Footer],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
   plugins: [
     ...plugins,
   ],
