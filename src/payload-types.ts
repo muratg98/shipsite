@@ -1111,6 +1111,7 @@ export interface User {
   tenant?: (string | null) | Tenant;
   name: string;
   email: string;
+  tenants: (string | Tenant)[];
   emailVerified: boolean;
   profileImage?: (string | null) | Media;
   stripeCustomerId: string;
@@ -1966,6 +1967,7 @@ export interface UserSelect<T extends boolean = true> {
   tenant?: T;
   name?: T;
   email?: T;
+  tenants?: T;
   emailVerified?: T;
   profileImage?: T;
   stripeCustomerId?: T;

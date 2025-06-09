@@ -16,18 +16,12 @@ async function getGlobalFromCollection(
 ) {
   console.log(collection, tenantID, depth)
   const payload = await getPayload({ config: configPromise })
-
+  console.log("chjeck payload: ", payload);
   const result = await payload.find({
-    collection,
-    depth,
-    where: {
-      tenant: {
-        equals: tenantID,
-      },
-    },
+    collection,  
   })
+  console.log('Query result for getGlobalFromCollection:', result);
 
-  console.log("tf: ", result);
 
   return result?.docs?.[0] || null
 }

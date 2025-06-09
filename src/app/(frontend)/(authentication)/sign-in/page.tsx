@@ -30,7 +30,6 @@ export default async function SignInPage({ tenantSlug }: { tenantSlug: string })
 
   const tenantID = tenant.id
 
-  // 🧠 Check for existing session
   const response = await auth.api.getSession({
     headers: await headers(),
   })
@@ -42,10 +41,18 @@ export default async function SignInPage({ tenantSlug }: { tenantSlug: string })
     redirect('/dashboard')
   }
 
-  // 🎯 Use tenant ID to fetch theme-specific header data
-  const headerData = (await getCachedGlobalFromCollection('header', tenantID, 1)()) as Header
-  console.log("check: ", headerData);
-  const media = headerData.Styles.media as Media
+  const getHeaderData = await payload.find({
+    collection: 'header',
+    limit: 1,
+    where: {
+      tenant: {
+        equals: tenantID,
+      },
+    },
+  })
+
+  const headerData= getHeaderData?.docs?.[0]
+  const media = headerData?.Styles.media as Media
   const enabledProviders = ['credentials', 'magicLink', 'google', 'facebook']
 
   return <SignInForm authMethods={enabledProviders} media={media} />

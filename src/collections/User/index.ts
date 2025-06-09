@@ -31,6 +31,13 @@ export const User: CollectionConfig = {
       required: true,
     },
     {
+      name: 'tenants',
+      type: 'relationship',
+      relationTo: 'tenants',
+      required: true,
+      hasMany: true,
+    },
+    {
       name: 'emailVerified',
       type: 'checkbox',
       required: true,

@@ -4,10 +4,8 @@ import { MongoClient } from "mongodb";
 import { getPayload } from "payload";
 import configPromise from '@payload-config'
 import { magicLink } from "better-auth/plugins";
-import { createAuthMiddleware } from "better-auth/api";
 import Stripe from "stripe";
 import { stripe } from "@better-auth/stripe"
-import {tenancy} from 'payload-tenancy'
 
 const client = new MongoClient(process.env.DATABASE_URI);
 const db = client.db()
@@ -107,6 +105,49 @@ export const auth = betterAuth({
             }
         }) 
     ],
+    databaseHooks: {
+      user: {
+        create: {
+          before: async (user, ctx) => {
+        try {
+          const request = ctx?.request as Request;
+          const url = new URL(request.url);
+          console.log("see ctx: ", request);
+          console.log("see url? ", url);
+
+          const pathname = url.pathname; // e.g. "/test/login"
+          const firstSegment = pathname.split('/').filter(Boolean)[0]?.toLowerCase();
+          const tenantSlug = firstSegment || 'main-tenant';
+
+          const payload = await getPayload({ config: configPromise });
+
+          const tenantQuery = await payload.find({
+            collection: 'tenants',
+            where: { slug: { equals: tenantSlug } },
+            limit: 1,
+          });
+
+          const tenant = tenantQuery.docs[0];
+
+          if (!tenant) {
+            console.warn(`Tenant not found for slug: ${tenantSlug}`);
+            return { data: user }; // proceed without modifying
+          }
+
+          return {
+            data: {
+              ...user,
+              tenants: [tenant.id], // assumes `tenants` is a hasMany relationship
+            },
+          };
+        } catch (err) {
+          console.error('Failed to assign tenant to user:', err);
+          return { data: user }; // fallback
+        }
+      }
+        },
+      },
+    },
     socialProviders: {
         github: {
           clientId: process.env.GITHUB_CLIENT_ID as string,
@@ -143,7 +184,7 @@ export const auth = betterAuth({
             clientId: process.env.REDDIT_CLIENT_ID as string,
             clientSecret: process.env.REDDIT_CLIENT_SECRET as string,
         },    
-    },
+    }
 })
 
 type Session = typeof auth.$Infer.Session

@@ -48,6 +48,12 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
   let fullSlug = ''
   let page: PageType | null = null
   
+
+  if (slug.length === 2 && slug[1] === 'login') {
+    const tenantSlug = slug[0]
+    return <SignInPage tenantSlug={tenantSlug|| ""} />
+  }
+
   if (slug.length === 0) {
     fullSlug = 'home'
   }
