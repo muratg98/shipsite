@@ -4,7 +4,6 @@ import { MongoClient } from "mongodb";
 import { getPayload } from "payload";
 import configPromise from '@payload-config'
 import { magicLink } from "better-auth/plugins";
-import { createAuthMiddleware } from "better-auth/api";
 import Stripe from "stripe";
 import { stripe } from "@better-auth/stripe"
 
@@ -14,7 +13,7 @@ const db = client.db()
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 export const auth = betterAuth({
-    database: mongodbAdapter(db),
+    database: mongodbAdapter(db as any),
     session: {
         expiresIn: 60 * 60 * 24 * 7, 
         updateAge: 60 * 60 * 24 * 7, 
@@ -38,13 +37,14 @@ export const auth = betterAuth({
     emailVerification: {
         sendOnSignUp: true,
         autoSignInAfterVerification: true,
-        sendVerificationEmail: async ({ user, token }) => {
-            const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
+        sendVerificationEmail: async ({ user, url, token }) => {
+            const name = user.name || user.email.split("@")[0]
+            const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}`;
             const payload = await getPayload({ config: configPromise });
             await payload.sendEmail({
                 to: user.email,
                 subject: "Verify your email address",
-                html: `Click the link to verify your email: <a href="${verificationUrl}" target="_blank">${verificationUrl}</a>`
+                html: `<p>Hello ${name},</p> Click the link to verify your email: <a href="${verificationUrl}" target="_blank">${verificationUrl}</a>`
             });
         },
     },

@@ -174,12 +174,11 @@ export const plugins: Plugin[] = [
       collections: {
         pages: {},
         categories: {},
-        user: {},
+        user: {useTenantAccess: false},
         products: {},
         posts: {},
         media: {},
         forms: {},
-        tenantHeader: {isGlobal: true}
       },
   
       tenantField: {

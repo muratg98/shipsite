@@ -20,6 +20,14 @@ const nextConfig = {
       }),
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/:tenantSlug/admin/:path*',
+        destination: '/admin/:path*', 
+      },
+    ];
+  },
   reactStrictMode: true,
   redirects,
 }

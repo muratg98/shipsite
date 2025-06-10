@@ -76,7 +76,6 @@ export interface Config {
     admins: Admin;
     products: Product;
     tenants: Tenant;
-    tenantHeader: TenantHeader;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,7 +95,6 @@ export interface Config {
     admins: AdminsSelect<false> | AdminsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     tenants: TenantsSelect<false> | TenantsSelect<true>;
-    tenantHeader: TenantHeaderSelect<false> | TenantHeaderSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1129,57 +1127,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tenantHeader".
- */
-export interface TenantHeader {
-  id: string;
-  tenant?: (string | null) | Tenant;
-  navItems?:
-    | {
-        link: {
-          type?: ('reference' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          url?: string | null;
-          label: string;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  showCTA?: boolean | null;
-  CallToAction?: {
-    link: {
-      type?: ('reference' | 'custom') | null;
-      newTab?: boolean | null;
-      reference?:
-        | ({
-            relationTo: 'pages';
-            value: string | Page;
-          } | null)
-        | ({
-            relationTo: 'posts';
-            value: string | Post;
-          } | null);
-      url?: string | null;
-      label: string;
-    };
-  };
-  Styles: {
-    media: string | Media;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1381,10 +1328,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'tenants';
         value: string | Tenant;
-      } | null)
-    | ({
-        relationTo: 'tenantHeader';
-        value: string | TenantHeader;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2006,48 +1949,6 @@ export interface TenantsSelect<T extends boolean = true> {
   domain?: T;
   slug?: T;
   allowPublicRead?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tenantHeader_select".
- */
-export interface TenantHeaderSelect<T extends boolean = true> {
-  tenant?: T;
-  navItems?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-        id?: T;
-      };
-  showCTA?: T;
-  CallToAction?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              url?: T;
-              label?: T;
-            };
-      };
-  Styles?:
-    | T
-    | {
-        media?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }

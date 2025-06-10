@@ -11,7 +11,6 @@ export default async function ProtectedLayout({
     const response = await auth.api.getSession({
       headers: await headers(),
     });
-
     const session = response?.session ?? null;
 
     if (!session) {
