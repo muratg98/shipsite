@@ -121,7 +121,6 @@ export const plugins: Plugin[] = [
     ],
     webhooks: {
       'customer.subscription.updated': async ({ event, stripe, config, payload }) => {
-        console.log("CHECK WE ACC HERE THO STILL:");
         const subscription = event.data.object;
 
         await payload.update({
@@ -146,8 +145,6 @@ export const plugins: Plugin[] = [
       },
       'customer.subscription.created': async ({ event, stripe, config, payload }) => {
         const subscription = event.data.object;
-        console.log("CHECK WE ACC HERE THO STILL222222242432:", subscription);
-
         const createcus= await payload.update({
           collection: 'user',
           where: { 'stripe.stripeCustomerId': subscription.customer },
@@ -166,7 +163,6 @@ export const plugins: Plugin[] = [
             },
           
         });
-        console.log("check create cus: ", createcus);
       },
       'customer.subscription.deleted': ({ event, stripe, config }) => {
         // do something...

@@ -74,8 +74,18 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
+      filterOptions(options) {
+        const tenantId = options.data.tenant;
+        if(!tenantId) return true
+        return {
+        tenant: {
+          equals: tenantId,
+        },
+      }
+      },
       label: 'Document to link to',
       relationTo: ['pages', 'posts'],
+      
       required: true,
     },
     {

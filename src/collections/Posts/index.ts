@@ -113,18 +113,20 @@ export const Posts: CollectionConfig<'posts'> = {
               admin: {
                 position: 'sidebar',
               },
-              filterOptions: async ({ id, siblingData }) => {
-                const tenantID = siblingData.tenant;
+              filterOptions(options) {
+                const tenantId = options.data.tenant;
+                const currentDoc = options.data.id;
+                if (!tenantId) return false
                 return {
                   and: [
                     {
                       id: {
-                        not_in: [id],
+                        not_in: [currentDoc],
                       },
                     },
                     {
                       tenant: {
-                        equals: tenantID,
+                        equals: tenantId,
                       },
                     },
                   ],

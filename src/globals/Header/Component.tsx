@@ -12,6 +12,5 @@ export async function Header() {
     createdAt: headerData.createdAt?.toString(),  
     updatedAt: headerData.updatedAt?.toString(),
   }
-
   return <HeaderClient data={cleanedData} />
 }
