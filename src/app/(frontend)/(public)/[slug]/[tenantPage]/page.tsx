@@ -15,6 +15,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Product } from '@/payload-types'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   
@@ -44,36 +45,35 @@ export async function generateStaticParams() {
 type Args = {
   params: Promise<{
     slug?: string
+    tenantPage?: string
   }>
 }
 
-export default async function Page({ params: paramsPromise }: Args) {
+export default async function TenantPage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'home' } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
+  const { slug = '/', tenantPage = 'home' } = await paramsPromise
 
-  let fullSlug = slug
-  let tenantId = undefined
+  let page: PageType | null
 
-  // if theres a tenant then the path is to a tenants home page
-  const tenant = await queryTenantBySlug({ slug })
-  if (tenant) {
-    tenantId = tenant.id
-    fullSlug='home'
+  const tenant = await queryTenantBySlug({ slug: slug })
+  
+  if (tenant && tenant.id) {
+    page = await queryPageBySlugAndTenantID({ slug: tenantPage, tenantId: tenant.id })
+    if (!page) {
+      page = await queryPageBySlugAndTenantID({ slug: 'home', tenantId: tenant.id })
+      if (!page) notFound()
+    }
+  } else {
+    page=null
   }
 
-  let page = await queryPageBySlug({ slug: fullSlug, ...(tenantId ? { tenantId } : {}) })
-
-  // Fallback to seeded home page
-  if (!page && slug === 'home') {
-    page = homeStatic
-  }
-
-  if (!page) {
-    return <PayloadRedirects url={`/${fullSlug}`} tenantId={tenantId} />
+  if(!page) {
+    return <PayloadRedirects url={`/${slug}/${tenantPage}`} tenantId={tenant?.id}/>
   }
 
   const { hero, layout } = page
+
+  const payload = await getPayload({ config: configPromise })
 
   const updatedLayout = await Promise.all(
     layout.map(async (block) => {
@@ -81,14 +81,23 @@ export default async function Page({ params: paramsPromise }: Args) {
         const fullPlans = await Promise.all(
           block.plans.map(async (plan) => {
             const productId = typeof plan.product === 'string' ? plan.product : plan.product.id
+
             const product = await payload.findByID({
               collection: 'products',
               id: productId,
             })
-            return { ...plan, product: product as Product }
+
+            return {
+              ...plan,
+              product: product as Product,
+            }
           })
         )
-        return { ...block, plans: fullPlans }
+
+        return {
+          ...block,
+          plans: fullPlans,
+        }
       }
       return block
     })
@@ -97,7 +106,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   return (
     <article className="pb-24">
       <PageClient />
-      <PayloadRedirects disableNotFound url={`/${fullSlug}`} tenantId={tenantId} />
+      <PayloadRedirects disableNotFound url={`/${slug}/${tenantPage}`} tenantId={tenant?.id}/>
       {draft && <LivePreviewListener />}
       <RenderHero {...hero} />
       <RenderBlocks blocks={updatedLayout} />
@@ -105,43 +114,23 @@ export default async function Page({ params: paramsPromise }: Args) {
   )
 }
 
+
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'home' } = await paramsPromise
+  const { slug='/', tenantPage = 'home' } = await paramsPromise
+  
+  const tenant = await queryTenantBySlug({ slug:slug })
+  if (!tenant) return {}
+  const page = await queryPageBySlugAndTenantID({
+      slug: tenantPage,
+      tenantId: tenant.id,
+    })
 
-  const tenant = await queryTenantBySlug({ slug })
-  const fullSlug = tenant ? `${slug}/home` : slug
-
-  const page = await queryPageBySlug({ slug: fullSlug, tenantId: tenant?.id })
   return generateMeta({ doc: page })
 }
 
-const queryPageBySlug = cache(async ({
-  slug,
-  tenantId,
-}: {
-  slug: string
-  tenantId?: string
-}) => {
+const queryPageBySlugAndTenantID = cache(async ({ slug, tenantId }: { slug: string, tenantId: string }) => {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
-
-  let resolvedTenantId = tenantId
-
-  if (!tenantId) {
-    const mainTenantResult = await payload.find({
-      collection: 'tenants',
-      limit: 1,
-      pagination: false,
-      where: {
-        isMainTenant: { equals: true },
-      },
-    })
-
-    const mainTenant = mainTenantResult.docs?.[0]
-    if (!mainTenant) return null
-
-    resolvedTenantId = mainTenant.id
-  }
 
   const result = await payload.find({
     collection: 'pages',
@@ -150,14 +139,17 @@ const queryPageBySlug = cache(async ({
     pagination: false,
     overrideAccess: draft,
     where: {
-      slug: { equals: slug },
-      tenant: { equals: resolvedTenantId },
+      slug: {
+        equals: slug,
+      },
+      tenant: {
+        equals: tenantId
+      }
     },
   })
 
   return result.docs?.[0] || null
 })
-
 
 const queryTenantBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload = await getPayload({ config: configPromise })

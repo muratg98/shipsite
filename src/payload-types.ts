@@ -295,6 +295,7 @@ export interface Tenant {
    * Used for url paths, example: /tenant-slug/page-slug
    */
   slug: string;
+  isMainTenant?: boolean | null;
   /**
    * If checked, logging in is not required to read. Useful for building public pages.
    */
@@ -1948,6 +1949,7 @@ export interface TenantsSelect<T extends boolean = true> {
   name?: T;
   domain?: T;
   slug?: T;
+  isMainTenant?: T;
   allowPublicRead?: T;
   updatedAt?: T;
   createdAt?: T;

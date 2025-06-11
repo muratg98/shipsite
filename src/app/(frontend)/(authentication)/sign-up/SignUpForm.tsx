@@ -90,6 +90,12 @@ export default function SignUpForm({ authMethods, media }: { authMethods: string
             variant: "error",
           });
         },
+        onSuccess: async () => {
+          toast({
+            title: "Check your inbox!",
+            description: "We've sent you a email. Please confirm your email by clicking the link.",
+          });
+        },
       }
     );
     setPending((prev) => ({ ...prev, credentials: false }));

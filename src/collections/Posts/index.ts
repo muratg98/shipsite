@@ -113,11 +113,21 @@ export const Posts: CollectionConfig<'posts'> = {
               admin: {
                 position: 'sidebar',
               },
-              filterOptions: ({ id }) => {
+              filterOptions: async ({ id, siblingData }) => {
+                const tenantID = siblingData.tenant;
                 return {
-                  id: {
-                    not_in: [id],
-                  },
+                  and: [
+                    {
+                      id: {
+                        not_in: [id],
+                      },
+                    },
+                    {
+                      tenant: {
+                        equals: tenantID,
+                      },
+                    },
+                  ],
                 }
               },
               hasMany: true,

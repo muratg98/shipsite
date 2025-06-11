@@ -39,7 +39,7 @@ export const auth = betterAuth({
         autoSignInAfterVerification: true,
         sendVerificationEmail: async ({ user, url, token }) => {
             const name = user.name || user.email.split("@")[0]
-            const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}`;
+            const verificationUrl = `${process.env.BETTER_AUTH_URL}/api/auth/verify-email?token=${token}&callbackURL=${process.env.EMAIL_VERIFICATION_CALLBACK_URL}`;
             const payload = await getPayload({ config: configPromise });
             await payload.sendEmail({
                 to: user.email,

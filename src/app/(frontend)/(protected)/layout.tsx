@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { DashboardSidebar } from "./components/DashboardSidebar";
+import { DashboardHeader } from "./components/DashboardHeader";
 
 export default async function ProtectedLayout({
   children,
@@ -17,7 +20,19 @@ export default async function ProtectedLayout({
       return redirect("/sign-in");
     }
 
-    return children;
+    return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <DashboardSidebar />
+        <SidebarInset>
+          <DashboardHeader />
+          <main className="flex-1 p-6">
+            {children}
+          </main>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
+  );
   } catch (error: any) {
     console.error("Error fetching session:", error);
 

@@ -15,7 +15,7 @@ import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { multiTenantPlugin } from '@payloadcms/plugin-multi-tenant'
 import type { Config } from '@/payload-types'
-import { isSuperAdmin } from '@/access/isSuperAdmin'
+import { isSuperAdmin, isSuperAdminAccess } from '@/access/isSuperAdmin'
 import { getUserTenantIDs } from '@/utilities/getUserTenantID'
 import { s3Storage } from '@payloadcms/storage-s3'
 
@@ -39,6 +39,7 @@ export const plugins: Plugin[] = [
           if ('name' in field && field.name === 'from') {
             return {
               ...field,
+              
               admin: {
                 description: 'You will need to rebuild the website when changing this field.',
               },
@@ -46,6 +47,12 @@ export const plugins: Plugin[] = [
           }
           return field
         })
+      },
+      access: {
+        create: isSuperAdminAccess,
+        update: isSuperAdminAccess,
+        delete: isSuperAdminAccess,
+        read: isSuperAdminAccess
       },
       hooks: {
         afterChange: [revalidateRedirects],

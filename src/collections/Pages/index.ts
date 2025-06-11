@@ -47,14 +47,27 @@ export const Pages: CollectionConfig<'pages'> = {
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) => {
-        const path = generatePreviewPath({
-          slug: typeof data?.slug === 'string' ? data.slug : '',
+      url: async ({ data, req }) => {
+        const { slug = '', tenant } = data
+
+        let fullSlug = slug
+
+        if (tenant) {
+          const tenantDoc = await req.payload.findByID({
+            collection: 'tenants',
+            id: tenant,
+          })
+
+          if (tenantDoc && !tenantDoc.isMainTenant) {
+            fullSlug = `${tenantDoc.slug}/${slug}`
+          }
+        }
+
+        return generatePreviewPath({
           collection: 'pages',
+          slug: fullSlug,
           req,
         })
-
-        return path
       },
     },
     preview: (data, { req }) =>
