@@ -5,6 +5,8 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import { Providers } from '@/providers'
 import { Toaster } from '@/components/ui/sonner'
+import { Header } from '@/globals/Header/Component'
+import { Footer } from '@/globals/Footer/Component'
 
 import './globals.css'
 
@@ -22,8 +24,10 @@ export default function RootLayout({
       <body>
         <Toaster/>
       <Providers>
+        <Header/>
         {children}
         </Providers>
+        <Footer/>
       </body>
     </html>
   )
