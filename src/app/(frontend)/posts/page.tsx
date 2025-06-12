@@ -24,11 +24,45 @@ export default async function Page() {
       slug: true,
       categories: true,
       meta: true,
+      authors: true,
+      createdAt: true,
     },
   })
 
+  const postsdoc = posts.docs
+
+  // Get all unique author IDs
+  const authorIDs = [
+    ...new Set(postsdoc.flatMap((postsdoc) => postsdoc.authors || [])),
+  ]
+
+  const authorNames = await payload.find({
+    collection: 'admins',
+    where: {
+      id: {
+        in: authorIDs,
+      },
+    },
+    depth: 0,
+    select: {
+      id: true,
+      name: true,
+    },
+  })
+
+  const authorsMap = new Map(
+    authorNames.docs.map((admin) => [admin.id, admin.name])
+  )
+
+  const postsWithAuthorNames = postsdoc.map((post) => ({
+    ...post,
+    authors: (post.authors || []).map(
+      (id) => authorsMap.get(id) || 'Unknown Author'
+    ),
+  }))
+
   return (
-    <div className="pt-24 pb-24">
+    <div className="pt-36 pb-24">
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
@@ -45,7 +79,7 @@ export default async function Page() {
         />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={postsWithAuthorNames} />
 
       <div className="container">
         {posts.totalPages > 1 && posts.page && (

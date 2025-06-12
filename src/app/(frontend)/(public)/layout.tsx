@@ -21,9 +21,7 @@ export default async function FrontendLayout({
     <>
         <Toaster richColors />
         <AdminBar adminBarProps={{ preview: isEnabled }} />
-        <Header />
         {children}
-        <Footer />
     </>
   )
 }

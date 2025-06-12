@@ -22,7 +22,6 @@ import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/useToast";
 import { ReactNode } from "react";
-import { ErrorContext } from "@better-fetch/fetch";
 import {
   FaGithub,
   FaGoogle,
@@ -83,7 +82,7 @@ export default function SignUpForm({ authMethods, media }: { authMethods: string
       { email: values.email, password: values.password, name: values.email, callbackURL: callbackURL },
       {
         onRequest: () => setPending((prev) => ({ ...prev, credentials: true })),
-        onError: (ctx: ErrorContext) => {
+        onError: (ctx) => {
           toast({
             title: "Something went wrong",
             description: ctx.error.message ?? "Something went wrong.",
@@ -106,7 +105,7 @@ export default function SignUpForm({ authMethods, media }: { authMethods: string
             description: "We've sent you a magic link. Please check your email.",
           });
         },
-        onError: (ctx: ErrorContext) => {
+        onError: (ctx) => {
           toast({
             title: "Something went wrong",
             description: ctx.error.message ?? "Something went wrong.",
@@ -127,7 +126,7 @@ export default function SignUpForm({ authMethods, media }: { authMethods: string
           router.push("/");
           router.refresh();
         },
-        onError: (ctx: ErrorContext) => {
+        onError: (ctx) => {
           toast({
             title: "Something went wrong",
             description: ctx.error.message ?? "Something went wrong.",
