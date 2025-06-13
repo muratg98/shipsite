@@ -445,8 +445,6 @@ export interface Admin {
   id: string;
   name: string;
   roles?: ('super-admin' | 'admin')[] | null;
-  stripeID?: string | null;
-  skipSync?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1084,6 +1082,8 @@ export interface User {
   startDate?: string | null;
   renewalDate?: string | null;
   cancelAtPeriodEnd?: boolean | null;
+  stripeID?: string | null;
+  skipSync?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1832,6 +1832,8 @@ export interface UserSelect<T extends boolean = true> {
   startDate?: T;
   renewalDate?: T;
   cancelAtPeriodEnd?: T;
+  stripeID?: T;
+  skipSync?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1842,8 +1844,6 @@ export interface UserSelect<T extends boolean = true> {
 export interface AdminsSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
-  stripeID?: T;
-  skipSync?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
