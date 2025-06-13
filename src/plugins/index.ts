@@ -96,7 +96,7 @@ export const plugins: Plugin[] = [
     stripeWebhooksEndpointSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET,
     sync: [
       {
-        collection: 'admins',
+        collection: 'user',
         stripeResourceType: 'customers',
         stripeResourceTypeSingular: 'customer',
         fields: [
