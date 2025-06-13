@@ -1,15 +1,15 @@
 import type { CollectionConfig } from 'payload';
-import { authenticated } from '../../access/authenticated';
 import Stripe from 'stripe'
+import { isSuperAdminAccess } from '@/access/isSuperAdmin';
+import { authenticated } from '@/access/authenticated';
 
 export const Products: CollectionConfig = {
   slug: 'products',
   access: {
-    admin: authenticated,
-    create: authenticated,
-    delete: authenticated,
+    create: isSuperAdminAccess,
+    delete: isSuperAdminAccess,
     read: authenticated,
-    update: authenticated,
+    update: isSuperAdminAccess,
   },
   admin: {
     useAsTitle: 'name',

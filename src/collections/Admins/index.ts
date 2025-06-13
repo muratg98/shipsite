@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { APIError } from 'payload'
 import { isSuperAdmin } from '@/access/isSuperAdmin'
+import { isSuperAdminAccess } from '@/access/isSuperAdmin'
 
 class AdminPasswordError extends APIError {
   constructor(message: string) {
@@ -14,10 +15,10 @@ export const Admins: CollectionConfig = {
   slug: 'admins',
   access: {
     admin: authenticated,
-    create: authenticated,
-    delete: authenticated,
+    create: isSuperAdminAccess,
+    delete: isSuperAdminAccess,
     read: authenticated,
-    update: authenticated,
+    update: isSuperAdminAccess,
   },
   admin: {
     defaultColumns: ['name', 'email'],

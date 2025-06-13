@@ -8,3 +8,4 @@ export const isSuperAdminAccess: Access = ({ req }): boolean => {
 export const isSuperAdmin = (user: Admin | null): boolean => {
   return Boolean(user?.roles?.includes('super-admin'))
 }
+
