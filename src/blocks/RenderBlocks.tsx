@@ -2,7 +2,6 @@ import React, { Fragment } from 'react'
 
 import type { Page } from '@/payload-types'
 
-import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
@@ -14,9 +13,9 @@ import { ZigZagBlock } from './ZigZag/Component'
 import { PricingBlock } from './Pricing/Component'
 import { TestimonialBlock } from './Testimonial/Component'
 import { TeamBlock } from './Team/Component'
+import { BannerBlock } from './Banner/Component'
 
 const blockComponents = {
-  archive: ArchiveBlock,
   content: ContentBlock,
   cta: CallToActionBlock,
   formBlock: FormBlock,
@@ -27,7 +26,8 @@ const blockComponents = {
   zigzag: ZigZagBlock,
   pricing: PricingBlock,
   testimonial: TestimonialBlock,
-  team: TeamBlock
+  team: TeamBlock,
+  banner: BannerBlock
 }
 
 export const RenderBlocks: React.FC<{

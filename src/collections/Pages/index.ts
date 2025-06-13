@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
 import { FormBlock } from '../../blocks/Form/config'
@@ -17,6 +16,7 @@ import { Features } from '@/blocks/Features/config'
 import { Zigzag } from '@/blocks/ZigZag/config'
 import { TestimonialBlock } from '@/blocks/Testimonial/config'
 import { Team } from '@/blocks/Team/config'
+import { Banner } from '@/blocks/Banner/config'
 
 import {
   MetaDescriptionField,
@@ -81,7 +81,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, Accordion, Pricing, CloudLogos, Features, Zigzag, TestimonialBlock, Team],
+              blocks: [CallToAction, Content, MediaBlock, FormBlock, Accordion, Pricing, CloudLogos, Features, Zigzag, TestimonialBlock, Team, Banner],
               required: true,
               admin: {
                 initCollapsed: true,

@@ -9,7 +9,6 @@ import { fileURLToPath } from 'url'
 import { Categories } from './collections/Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
 import { User } from './collections/User'
 import { Admins } from './collections/Admins'
 import { Products } from './collections/Products'
@@ -79,7 +78,7 @@ export default buildConfig({
     url: process.env.DATABASE_URI || '',
     autoPluralization: false
   }),
-  collections: [Pages, Posts, Media, Categories, User, Admins, Products],
+  collections: [Pages, Media, Categories, User, Admins, Products],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
