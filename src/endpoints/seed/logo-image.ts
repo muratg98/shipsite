@@ -1,6 +1,6 @@
 import type { Media } from '@/payload-types'
 
-export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
+export const LogoImage: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
   alt: 'Curving abstract shapes with an orange and blue gradient',
   caption: {
     root: {
@@ -15,7 +15,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               format: 0,
               mode: 'normal',
               style: '',
-              text: 'Photo by ',
+              text: 'Logo of ',
               version: 1,
             },
             {
@@ -27,7 +27,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Andrew Kliatskyi',
+                  text: 'ShipShip',
                   version: 1,
                 },
               ],
@@ -35,7 +35,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               fields: {
                 linkType: 'custom',
                 newTab: true,
-                url: 'https://unsplash.com/@kirp',
+                url: 'https://github.com/muratg98/shipsite/blob/master/public/shipshiplogoorange.png?raw=true',
               },
               format: '',
               indent: 0,
@@ -47,7 +47,7 @@ export const image2: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               format: 0,
               mode: 'normal',
               style: '',
-              text: ' on Unsplash.',
+              text: ' on Github.',
               version: 1,
             },
           ],

@@ -4,7 +4,6 @@ import type { Page } from '@/payload-types'
 
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
-import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { CloudLogosBlock } from './CloudLogo/Component'
 import { FeaturesBlock } from './Features/Component'
@@ -18,7 +17,6 @@ import { BannerBlock } from './Banner/Component'
 const blockComponents = {
   content: ContentBlock,
   cta: CallToActionBlock,
-  formBlock: FormBlock,
   mediaBlock: MediaBlock,
   cloudLogos: CloudLogosBlock,
   features: FeaturesBlock,

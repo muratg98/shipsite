@@ -1,5 +1,4 @@
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { Plugin } from 'payload'
@@ -46,32 +45,6 @@ export const plugins: Plugin[] = [
   seoPlugin({
     generateTitle,
     generateURL,
-  }),
-  formBuilderPlugin({
-    fields: {
-      payment: false,
-    },
-    formOverrides: {
-      fields: ({ defaultFields }) => [
-        ...defaultFields,
-        {
-          name: 'formStyle',
-          label: 'Form Style',
-          type: 'select',
-          options: [
-            { label: 'Newsletter', value: 'newsletter' },
-            { label: 'Contact Us', value: 'contact' },
-            { label: 'None', value: 'none' },
-          ],
-          required: true,
-          defaultValue: 'none',
-          admin: {
-            position: 'sidebar',
-            description: 'Select a preset style for this form.',
-          },
-        },
-      ],
-    },
   }),
   payloadCloudPlugin(),
   stripePlugin({

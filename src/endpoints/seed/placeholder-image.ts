@@ -1,7 +1,7 @@
 import type { Media } from '@/payload-types'
 
-export const image1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
-  alt: 'Curving abstract shapes with an orange and blue gradient',
+export const PlaceholderImage: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
+  alt: 'Placeholder image',
   caption: {
     root: {
       type: 'root',
@@ -27,7 +27,7 @@ export const image1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
                   format: 0,
                   mode: 'normal',
                   style: '',
-                  text: 'Andrew Kliatskyi',
+                  text: 'ShipShip PlaceHolder Image',
                   version: 1,
                 },
               ],
@@ -35,7 +35,7 @@ export const image1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               fields: {
                 linkType: 'custom',
                 newTab: true,
-                url: 'https://unsplash.com/@kirp',
+                url: 'https://github.com/muratg98/shipsite/blob/master/public/shipshipplaceholderimage.png?raw=true',
               },
               format: '',
               indent: 0,
@@ -47,7 +47,7 @@ export const image1: Omit<Media, 'createdAt' | 'id' | 'updatedAt'> = {
               format: 0,
               mode: 'normal',
               style: '',
-              text: ' on Unsplash.',
+              text: ' on Github.',
               version: 1,
             },
           ],

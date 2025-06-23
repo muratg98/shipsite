@@ -1,7 +1,6 @@
 import type { CollectionConfig } from 'payload'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
-import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
@@ -81,7 +80,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, FormBlock, Accordion, Pricing, CloudLogos, Features, Zigzag, TestimonialBlock, Team, Banner],
+              blocks: [CallToAction, Content, MediaBlock, Accordion, Pricing, CloudLogos, Features, Zigzag, TestimonialBlock, Team, Banner],
               required: true,
               admin: {
                 initCollapsed: true,

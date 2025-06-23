@@ -9,7 +9,6 @@ import { imageHero1 } from './image-hero-1'
 import { post1 } from './post-1'
 import { post2 } from './post-2'
 import { post3 } from './post-3'
-import { Admin, User } from '@/payload-types'
 
 const collections: CollectionSlug[] = [
   'categories',
