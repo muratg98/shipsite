@@ -2,7 +2,6 @@
 
 import React, { Fragment, useCallback, useState } from 'react'
 import { toast } from '@payloadcms/ui'
-import LoadingButton from '@/components/loading-button'
 import { Button } from '@/components/ui/button'
 
 import './index.scss'

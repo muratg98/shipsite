@@ -23,6 +23,7 @@ const globals: GlobalSlug[] = ['header', 'footer']
 const PLACEHOLDER_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/shipshipplaceholderimage.png?raw=true'
 const LOGO_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/shipshiplogoorange.png?raw=true'
 const PERSON_PLACEHOLDER_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/personplaceholder.jpg?raw=true'
+
 export const seed = async ({
   payload,
   req,
@@ -90,7 +91,7 @@ await Promise.all(
         email: 'demo-author@example.com',
         password: 'DemoPassword1!',
         _verified: true,
-        roles: ['admin'],
+        roles: ['super-admin'],
       },
     }),
     payload.create({
