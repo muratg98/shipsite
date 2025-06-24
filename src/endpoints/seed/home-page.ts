@@ -1,19 +1,26 @@
 import type { Form } from '@/payload-types'
 import { RequiredDataFromCollectionSlug } from 'payload'
 
-type HomeArgs = {
+type ContactArgs = {
   newsletterForm: Form
+  image1ID: string
+  logoID: string,
+  personPlaceholderImageID: string
 }
 
-export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
+export const home: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pages'> = ({
   newsletterForm,
-}) => ({
-  slug: 'home',
+  image1ID,
+  logoID,
+  personPlaceholderImageID
+}) => {
+  return {
+    slug: 'home',
   _status: 'published',
   hero: {
     type: 'simpleImpact',
-    heroImage: '{{IMAGE_1}}',
-    media: '{{IMAGE_1}}',
+    heroImage: image1ID,
+    media: image1ID,
     sliderImages: [],
     richText: {
       root: {
@@ -91,7 +98,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       blockName: 'Logos',
       grayscale: false,
       companyLogos: Array(4).fill({
-        image: '{{SHIPSHIP_LOGO_ID}}'
+        image: logoID
       })
     },
     {
@@ -129,6 +136,62 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       ]
     },
     {
+      blockType: 'formBlock',
+      enableIntro: true,
+      form: newsletterForm.id,
+      introContent: {
+        root: {
+          type: 'root',
+          version: 1,
+          direction: 'ltr',
+          format: '',
+          indent: 0,
+          children: [
+            {
+              type: 'heading',
+              tag: 'h2',
+              textFormat: 1,
+              version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              children: [
+                {
+                  type: 'text',
+                  version: 1,
+                  text: 'Stay in the Loop',
+                  detail: 0,
+                  format: 1,
+                  mode: 'normal',
+                  style: ''
+                }
+              ]
+            },
+            {
+              type: 'paragraph',
+              textFormat: 0,
+              version: 1,
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              textStyle: '',
+              children: [
+                {
+                  type: 'text',
+                  version: 1,
+                  text: 'Subscribe to our newsletter to get updates, resources, and tips for building better websites with ShipShip.',
+                  detail: 0,
+                  format: 0,
+                  mode: 'normal',
+                  style: ''
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
     blockType: 'zigzag',
     blockName: 'ZigZag',
     header: 'ZigZag Content',
@@ -136,7 +199,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
     description: 'Easily and cleanly provide more detail about your business here.',
     content: [
       {
-        image: '{{IMAGE_1}}',
+        image: image1ID,
         header: 'Add Text Block 1 Header ',
         richText: {
           root: {
@@ -192,15 +255,16 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         links: [
           {
             link: {
-              type: 'reference',
+              type: 'custom',
               label: 'Learn More',
               appearance: 'default',
+              url: '/home'
             },
           },
         ],
       },
       {
-        image: '{{IMAGE_1}}',
+        image: image1ID,
         header: 'Add Text Block 2 Header ',
         richText: {
           root: {
@@ -257,15 +321,16 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         links: [
           {
             link: {
-              type: 'reference',
+              type: 'custom',
               label: 'Learn More',
               appearance: 'default',
-            },
+              url: '/home'
+            }
           },
         ],
       },
       {
-        image: '{{IMAGE_1}}',
+        image: image1ID,
         header: 'Add Text Block 3 Header ',
         richText: {
           root: {
@@ -322,9 +387,10 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
         links: [
           {
             link: {
-              type: 'reference',
+              type: 'custom',
               label: 'Learn More',
               appearance: 'default',
+              url: '/home'
             },
           },
         ],
@@ -342,7 +408,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       {
         firstName: 'John',
         lastName: 'Smith',
-        image: '{{PERSON_PLACEHOLDER_IMAGE}}',
+        image: personPlaceholderImageID,
         company: 'Example Company',
         jobRole: 'CEO',
         review:
@@ -351,7 +417,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       {
         firstName: 'Miss',
         lastName: 'Angel',
-        image: '{{PERSON_PLACEHOLDER_IMAGE}}',
+        image: personPlaceholderImageID,
         company: 'Example Company',
         jobRole: 'CEO',
         review: 'ShipShip helped us launch a so fast! ',
@@ -359,7 +425,7 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       {
         firstName: 'John',
         lastName: 'Wick',
-        image: '{{PERSON_PLACEHOLDER_IMAGE}}',
+        image: personPlaceholderImageID,
         company: 'Example Company',
         jobRole: 'CTO',
         review: 'ShipShip is it!',
@@ -411,11 +477,295 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
       },
     ],
   },
+  {
+    blockType: 'accordion',
+    header: 'FAQs',
+    blockName: 'FAQs',
+    title: 'Answers to Common Questions',
+    description:
+      'Have questions? We’ve got answers. Here’s everything you need to know to get started with ShipShip and customize it for your business or project. Feel free to update these with your own questions later.',
+    size: 'half',
+    items: [
+      {
+        trigger: 'What is ShipShip?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'ShipShip is a modern website starter built with Payload CMS, designed to help you launch fast and scale easily. It includes ready-made sections like forms, blogs, testimonials, and more.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'Can I customize the design?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Yes! ShipShip is built with flexibility in mind. You can easily change colors, fonts, images, and layouts — no design or code experience required.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'Who is ShipShip for?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'ShipShip is perfect for founders, freelancers, agencies, or anyone who needs a professional site quickly — with full control over content and layout.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'Do I need to know how to code?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Nope! You can launch a fully functional site using the visual CMS. However, developers can dive deeper to fully customize components and extend functionality.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'What kind of projects can I build with ShipShip?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Use ShipShip for portfolios, startup landing pages, small business sites, blogs, and even ecommerce with some customization. It’s a strong foundation for almost any web project.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'How do I update the content?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'ShipShip uses Payload CMS, which provides an intuitive admin dashboard. You can update text, images, and page layouts with just a few clicks.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'Can I add my own FAQ questions here?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Absolutely. This FAQ section is fully editable. Replace these with your own most common questions to better support your users or clients.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        trigger: 'Is ShipShip open source?',
+        content: {
+          root: {
+            type: 'root',
+            version: 1,
+            indent: 0,
+            format: '',
+            direction: 'ltr',
+            children: [
+              {
+                type: 'paragraph',
+                version: 1,
+                indent: 0,
+                format: '',
+                direction: 'ltr',
+                textFormat: 0,
+                textStyle: '',
+                children: [
+                  {
+                    type: 'text',
+                    version: 1,
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: 'Yes — it’s built on open-source technologies and designed to be extended. You can customize and adapt it freely to fit your needs.',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ],
+  }
   ],
   meta: {
     description: 'An open-source website built with Payload and Next.js.',
-    image: '{{IMAGE_1}}',
+    image: image1ID,
     title: 'Payload Website Template',
   },
   title: 'Home',
-})
+  }
+}

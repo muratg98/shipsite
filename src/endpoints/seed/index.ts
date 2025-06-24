@@ -1,15 +1,13 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { contactForm as contactFormData } from './contact-form'
+import { newsletterForm as newsletterFormData } from './newsletter-form'
 import { contact } from './contact-page'
-import { home } from './home'
-import { image1 } from './image-1'
-import { image2 } from './image-2'
-import { imageHero1 } from './image-hero-1'
+import { home } from './home-page'
+import { shipshipPlaceholderImage } from './shipshipPlaceholderImage'
+import { logoImage } from './shipshipLogoImage'
+import { personPlaceholderImage } from './personPlaceholderImage'
 import { post1 } from './post-1'
-import { post2 } from './post-2'
-import { post3 } from './post-3'
-import { Admin, User } from '@/payload-types'
 
 const collections: CollectionSlug[] = [
   'categories',
@@ -22,10 +20,9 @@ const collections: CollectionSlug[] = [
 ]
 const globals: GlobalSlug[] = ['header', 'footer']
 
-// Next.js revalidation errors are normal when seeding the database without a server running
-// i.e. running `yarn seed` locally instead of using the admin UI within an active app
-// The app is not running to revalidate the pages and so the API routes are not available
-// These error messages can be ignored: `Error hitting revalidate route for...`
+const PLACEHOLDER_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/shipshipplaceholderimage.png?raw=true'
+const LOGO_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/shipshiplogoorange.png?raw=true'
+const PERSON_PLACEHOLDER_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/master/public/personplaceholder.jpg?raw=true'
 export const seed = async ({
   payload,
   req,
@@ -35,11 +32,7 @@ export const seed = async ({
 }): Promise<void> => {
   payload.logger.info('Seeding database...')
 
-  // we need to clear the media directory before seeding
-  // as well as the collections and globals
-  // this is because while `yarn seed` drops the database
-  // the custom `/api/seed` endpoint does not
-  payload.logger.info(`— Clearing collections and globals...`)
+payload.logger.info('— Clearing collections and globals...')
 
   const minimalReq = {
     user: req.user,
@@ -63,7 +56,7 @@ await Promise.all(
     .map((collection) => payload.db.deleteVersions({ collection, req: minimalReq, where: {} })),
 )
 
-  payload.logger.info(`— Seeding demo author and user...`)
+  payload.logger.info('— Seeding demo author and user...')
 
   await payload.delete({
     collection: 'admins',
@@ -77,30 +70,18 @@ await Promise.all(
 
   payload.logger.info(`— Seeding media...`)
 
-  const [image1Buffer, image2Buffer, image3Buffer, hero1Buffer] = await Promise.all([
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post1.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post2.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-post3.webp',
-    ),
-    fetchFileByURL(
-      'https://raw.githubusercontent.com/payloadcms/payload/refs/heads/main/templates/website/src/endpoints/seed/image-hero1.webp',
-    ),
+  const [placeholderImageBuffer, logoImageBuffer, personPlaceholderImageBuffer] = await Promise.all([
+    fetchFileByURL(PLACEHOLDER_IMAGE_URL),
+    fetchFileByURL(LOGO_IMAGE_URL),
+    fetchFileByURL(PERSON_PLACEHOLDER_IMAGE_URL)
   ])
 
   const [
     demoAuthor,
-    image1Doc,
-    image2Doc,
-    image3Doc,
-    imageHomeDoc,
+    placeholderImageDoc,
+    logoImageDoc,
+    personPlaceholderImageDoc,
     technologyCategory,
-    newsCategory,
-    financeCategory,
   ] = await Promise.all([
     payload.create({
       collection: 'admins',
@@ -109,28 +90,23 @@ await Promise.all(
         email: 'demo-author@example.com',
         password: 'DemoPassword1!',
         _verified: true,
-        roles: ['super-admin']
+        roles: ['admin'],
       },
     }),
     payload.create({
       collection: 'media',
-      data: image1,
-      file: image1Buffer,
+      data: shipshipPlaceholderImage,
+      file: placeholderImageBuffer,
     }),
     payload.create({
       collection: 'media',
-      data: image2,
-      file: image2Buffer,
+      data: logoImage,
+      file: logoImageBuffer,
     }),
     payload.create({
       collection: 'media',
-      data: image2,
-      file: image3Buffer,
-    }),
-    payload.create({
-      collection: 'media',
-      data: imageHero1,
-      file: hero1Buffer,
+      data: personPlaceholderImage,
+      file: personPlaceholderImageBuffer,
     }),
 
     payload.create({
@@ -145,151 +121,36 @@ await Promise.all(
         ],
       },
     }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'News',
-        breadcrumbs: [
-          {
-            label: 'News',
-            url: '/news',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Finance',
-        breadcrumbs: [
-          {
-            label: 'Finance',
-            url: '/finance',
-          },
-        ],
-      },
-    }),
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Design',
-        breadcrumbs: [
-          {
-            label: 'Design',
-            url: '/design',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Software',
-        breadcrumbs: [
-          {
-            label: 'Software',
-            url: '/software',
-          },
-        ],
-      },
-    }),
-
-    payload.create({
-      collection: 'categories',
-      data: {
-        title: 'Engineering',
-        breadcrumbs: [
-          {
-            label: 'Engineering',
-            url: '/engineering',
-          },
-        ],
-      },
-    }),
   ])
 
   let demoAuthorID: number | string = demoAuthor.id
 
-  let image1ID: number | string = image1Doc.id
-  let image2ID: number | string = image2Doc.id
-  let image3ID: number | string = image3Doc.id
-  let imageHomeID: number | string = imageHomeDoc.id
+  let placeholderImageID: number | string = placeholderImageDoc.id
+  let logoImageID: number | string = logoImageDoc.id
+  let personPlaceholderImageID: number | string = personPlaceholderImageDoc.id
 
   if (payload.db.defaultIDType === 'text') {
-    image1ID = `"${image1Doc.id}"`
-    image2ID = `"${image2Doc.id}"`
-    image3ID = `"${image3Doc.id}"`
-    imageHomeID = `"${imageHomeDoc.id}"`
+    placeholderImageID = `"${placeholderImageDoc.id}"`
+    logoImageID = `"${logoImageDoc.id}"`
+    personPlaceholderImageID = `"${personPlaceholderImageDoc.id}"`
     demoAuthorID = `"${demoAuthorID}"`
   }
 
   payload.logger.info(`— Seeding posts...`)
 
-  // Do not create posts with `Promise.all` because we want the posts to be created in order
-  // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const post1Doc = await payload.create({
+  await payload.create({
   collection: 'posts',
   data: {
     ...post1({
-      heroImage: image1Doc,
-      blockImage: image2Doc,
+      heroImage: placeholderImageDoc,
+      blockImage: placeholderImageDoc,
       author: demoAuthor,
     }),
     categories: [technologyCategory.id],
   },
   })
 
-  const post2Doc = await payload.create({
-    collection: 'posts',
-    data: {
-      ...post2({
-        heroImage: image2Doc,
-        blockImage: image2Doc,
-        author: demoAuthor,
-      }),
-      categories: [newsCategory.id],
-    },
-    })
-
-  const post3Doc =await payload.create({
-    collection: 'posts',
-    data: {
-      ...post3({
-        heroImage: image2Doc,
-        blockImage: image2Doc,
-        author: demoAuthor,
-      }),
-      categories: [financeCategory.id],
-    },
-    })
-
-  // update each post with related posts
-  await payload.update({
-    id: post1Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post2Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post2Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post3Doc.id],
-    },
-  })
-  await payload.update({
-    id: post3Doc.id,
-    collection: 'posts',
-    data: {
-      relatedPosts: [post1Doc.id, post2Doc.id],
-    },
-  })
-
-  payload.logger.info(`— Seeding contact form...`)
+  payload.logger.info(`— Seeding contact form and newsletter form...`)
 
   const contactForm = await payload.create({
     collection: 'forms',
@@ -297,35 +158,27 @@ await Promise.all(
     data: JSON.parse(JSON.stringify(contactFormData)),
   })
 
-  let contactFormID: number | string = contactForm.id
-
-  if (payload.db.defaultIDType === 'text') {
-    contactFormID = `"${contactFormID}"`
-  }
+  const newsletterForm = await payload.create({
+    collection: 'forms',
+    depth: 0,
+    data: JSON.parse(JSON.stringify(newsletterFormData)),
+  })
 
   payload.logger.info(`— Seeding pages...`)
 
   const contactPageData = contact({ contactForm: contactForm })
+  const homePageData = home({newsletterForm: newsletterForm, logoID: logoImageDoc.id, personPlaceholderImageID: personPlaceholderImageDoc.id, image1ID: placeholderImageDoc.id})
 
   const [_, contactPage] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: JSON.parse(
-        JSON.stringify(home)
-          .replace(/"\{\{IMAGE_1\}\}"/g, String(imageHomeID))
-          .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID)),
-      ),
+      data: homePageData
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: JSON.parse(
-        JSON.stringify(contactPageData).replace(
-          /"\{\{CONTACT_FORM_ID\}\}"/g,
-          String(contactFormID),
-        ),
-      ),
+      data: contactPageData,
     }),
   ])
 
@@ -333,64 +186,147 @@ await Promise.all(
 
   await Promise.all([
     payload.updateGlobal({
-      slug: 'header',
-      data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'Posts',
-              url: '/posts',
+    slug: 'header',
+    data: {
+      navItems: [
+        {
+          link: {
+            type: 'custom',
+            url: '/posts',
+            label: 'Posts',
+          },
+        },
+        {
+          link: {
+            type: 'reference',
+            label: 'Contact',
+            reference: {
+              relationTo: 'pages',
+              value: contactPage.id,
             },
           },
-          {
-            link: {
-              type: 'reference',
-              label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
-            },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: '#FAQs',
+            label: 'FAQ',
           },
-        ],
+        },
+        {
+          link: {
+            type: 'custom',
+            url: '#Features',
+            label: 'Features',
+          },
+        },
+      ],
+      CallToAction: {
+        link: {
+          type: 'custom',
+          url: 'dashboard',
+          label: 'Get Started',
+        },
       },
-    }),
+      showCTA: true,
+      Styles: {
+        media: logoImageDoc.id,
+      },
+    },
+  }),
     payload.updateGlobal({
-      slug: 'footer',
-      data: {
-        navSections: [
-            {
-              name: "section one", 
-              navItems:[
+    slug: 'footer',
+    data: {
+      navSections: [
+        {
+          name: 'Navigation',
+          navItems: [
             {
               link: {
                 type: 'custom',
-                label: 'Admin',
-                url: '/admin',
+                newTab: true,
+                url: '/',
+                label: 'Home',
               },
             },
             {
               link: {
                 type: 'custom',
-                label: 'Source Code',
+                url: '/admin',
+                label: 'Admin',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
                 newTab: true,
                 url: 'https://github.com/payloadcms/payload/tree/main/templates/website',
-              },
-            },
-            {
-              link: {
-                type: 'custom',
-                label: 'Payload',
-                newTab: true,
-                url: 'https://payloadcms.com/',
+                label: 'Source Code',
               },
             },
           ],
-          }
-        ]
-      },
-    }),
+        },
+        {
+          name: 'Help',
+          navItems: [
+            {
+              link: {
+                type: 'custom',
+                url: '/privacy-policy',
+                label: 'Privacy Policy',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
+                url: '/terms-of-service',
+                label: 'Terms of Service',
+              },
+            },
+            {
+              link: {
+                type: 'reference',
+                label: 'Contact Us',
+                reference: {
+                  relationTo: 'pages',
+                  value: contactPage.id,
+                },
+              },
+            },
+          ],
+        },
+        {
+          name: 'Our Socials',
+          navItems: [
+            {
+              link: {
+                type: 'custom',
+                url: '/',
+                label: 'Instagram',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
+                url: '/',
+                label: 'X',
+              },
+            },
+            {
+              link: {
+                type: 'custom',
+                url: '/',
+                label: 'Facebook',
+              },
+            },
+          ],
+        },
+      ],
+      useBottomText: true,
+      bottomText: 'Made fast and with love by ShipShip',
+      logo: logoImageDoc.id,
+    },
+  })
   ])
 
   payload.logger.info('Seeded database successfully!')

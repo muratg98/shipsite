@@ -2184,8 +2184,8 @@ export interface Header {
       label: string;
     };
   };
-  Styles: {
-    media: string | Media;
+  Styles?: {
+    media?: (string | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;

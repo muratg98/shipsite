@@ -11,7 +11,7 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
 }) => {
   if (!context.disableRevalidate) {
     if (doc._status === 'published') {
-      //#POSTSPLUGIN const path = 'fregregeg';### const path = `/posts/${doc.slug}` 
+      const path = `/posts/${doc.slug}` 
       payload.logger.info(`Revalidating post at path: ${path}`)
 
       revalidatePath(path)
