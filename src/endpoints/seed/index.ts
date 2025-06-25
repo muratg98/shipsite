@@ -26,48 +26,10 @@ const PERSON_PLACEHOLDER_IMAGE_URL = 'https://github.com/muratg98/shipsite/blob/
 
 export const seed = async ({
   payload,
-  req,
 }: {
   payload: Payload
-  req: PayloadRequest
 }): Promise<void> => {
   payload.logger.info('Seeding database...')
-
-payload.logger.info('— Clearing collections and globals...')
-
-  const minimalReq = {
-    user: req.user,
-  } as PayloadRequest
-
-  await Promise.all(
-    collections.map((collection) =>
-      payload.db.deleteMany({ collection, req: minimalReq, where: {} }),
-    ),
-  )
-
-  await Promise.all(
-    globals.map((global) =>
-      payload.db.globals.deleteMany({ global, req: minimalReq, where: {} }),
-    ),
-  )
-
-await Promise.all(
-  collections
-    .filter((collection) => Boolean(payload.collections[collection].config.versions))
-    .map((collection) => payload.db.deleteVersions({ collection, req: minimalReq, where: {} })),
-)
-
-  payload.logger.info('— Seeding demo author and user...')
-
-  await payload.delete({
-    collection: 'admins',
-    depth: 0,
-    where: {
-      email: {
-        equals: 'demo-author@example.com',
-      },
-    },
-  })
 
   payload.logger.info(`— Seeding media...`)
 
@@ -78,22 +40,11 @@ await Promise.all(
   ])
 
   const [
-    demoAuthor,
     placeholderImageDoc,
     logoImageDoc,
     personPlaceholderImageDoc,
     technologyCategory,
   ] = await Promise.all([
-    payload.create({
-      collection: 'admins',
-      data: {
-        name: 'Demo Author',
-        email: 'demo-author@example.com',
-        password: 'DemoPassword1!',
-        _verified: true,
-        roles: ['super-admin'],
-      },
-    }),
     payload.create({
       collection: 'media',
       data: shipshipPlaceholderImage,
@@ -124,8 +75,6 @@ await Promise.all(
     }),
   ])
 
-  let demoAuthorID: number | string = demoAuthor.id
-
   let placeholderImageID: number | string = placeholderImageDoc.id
   let logoImageID: number | string = logoImageDoc.id
   let personPlaceholderImageID: number | string = personPlaceholderImageDoc.id
@@ -134,7 +83,6 @@ await Promise.all(
     placeholderImageID = `"${placeholderImageDoc.id}"`
     logoImageID = `"${logoImageDoc.id}"`
     personPlaceholderImageID = `"${personPlaceholderImageDoc.id}"`
-    demoAuthorID = `"${demoAuthorID}"`
   }
 
   payload.logger.info(`— Seeding posts...`)
@@ -145,10 +93,12 @@ await Promise.all(
     ...post1({
       heroImage: placeholderImageDoc,
       blockImage: placeholderImageDoc,
-      author: demoAuthor,
     }),
     categories: [technologyCategory.id],
   },
+  context: {
+    disableRevalidate: true
+  }
   })
 
   payload.logger.info(`— Seeding contact form and newsletter form...`)
@@ -174,12 +124,18 @@ await Promise.all(
     payload.create({
       collection: 'pages',
       depth: 0,
-      data: homePageData
+      data: homePageData,
+      context: {
+        disableRevalidate: true
+      }
     }),
     payload.create({
       collection: 'pages',
       depth: 0,
       data: contactPageData,
+      context: {
+        disableRevalidate: true
+      }
     }),
   ])
 
@@ -188,6 +144,9 @@ await Promise.all(
   await Promise.all([
     payload.updateGlobal({
     slug: 'header',
+    context: {
+        disableRevalidate: true
+      },
     data: {
       navItems: [
         {
@@ -237,6 +196,9 @@ await Promise.all(
   }),
     payload.updateGlobal({
     slug: 'footer',
+    context: {
+        disableRevalidate: true
+      },
     data: {
       navSections: [
         {

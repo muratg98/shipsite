@@ -106,5 +106,18 @@ export default buildConfig({
     },
     tasks: [],
   },
+  onInit: async (payload) => {
+    try {
+      const existingAdmins = await payload.find({
+        collection: 'admins',
+        limit: 1,
+      })
 
+      if (existingAdmins.totalDocs === 0) {
+        await seed({ payload })
+      }
+    } catch (err) {
+      console.error('Error during onInit seeding:', err)
+    }
+  },
 })

@@ -39,7 +39,7 @@ export const Admins: CollectionConfig = {
       },
       name: 'roles',
       type: 'select',
-      defaultValue: ['user'],
+      defaultValue: ['super-admin'],
       hasMany: true,
       options: ['super-admin', 'admin'],
       access: {
