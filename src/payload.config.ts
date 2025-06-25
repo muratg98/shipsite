@@ -41,7 +41,6 @@ export default buildConfig({
       beforeLogin: ['@/components/BeforeLogin'],
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
-      beforeDashboard: ['@/components/BeforeDashboard'],
       graphics: {
         Logo: '@/components/AdminLogo',
         Icon: '@/components/AdminLogo'
@@ -106,6 +105,7 @@ export default buildConfig({
     },
     tasks: [],
   },
+  // DELETE THIS CODE AFTER SEEDING
   onInit: async (payload) => {
     try {
       const existingAdmins = await payload.find({
