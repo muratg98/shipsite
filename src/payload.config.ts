@@ -1,27 +1,27 @@
 // storage-adapter-import-placeholder
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { mongooseAdapter } from '@payloadcms/db-mongodb';
 
-import sharp from 'sharp' 
-import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
-import { fileURLToPath } from 'url'
+import sharp from 'sharp';
+import path from 'path';
+import { buildConfig, PayloadRequest } from 'payload';
+import { fileURLToPath } from 'url';
 
-import { Categories } from './collections/Categories'
-import { Media } from './collections/Media'
-import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
-import { User } from './collections/User'
-import { Admins } from './collections/Admins'
-import { Products } from './collections/Products'
+import { Categories } from './collections/Categories';
+import { Media } from './collections/Media';
+import { Pages } from './collections/Pages';
+import { Posts } from './collections/Posts';
+import { User } from './collections/User';
+import { Admins } from './collections/Admins';
+import { Products } from './collections/Products';
 
-import { Footer } from './globals/Footer/config'
-import { Header } from './globals/Header/config'
+import { Footer } from './globals/Footer/config';
+import { Header } from './globals/Header/config';
 
-import { plugins } from './plugins'
-import { defaultLexical } from '@/fields/defaultLexical'
-import { getServerSideURL } from './utilities/getURL'
-import brevoAdapter from './utilities/brevoAdapter'
-import { seed } from './endpoints/seed'
+import { plugins } from './plugins';
+import { defaultLexical } from '@/fields/defaultLexical';
+import { getServerSideURL } from './utilities/getURL';
+import brevoAdapter from './utilities/brevoAdapter';
+import { seed } from './endpoints/seed';
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
