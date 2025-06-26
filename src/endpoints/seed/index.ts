@@ -75,16 +75,6 @@ export const seed = async ({
     }),
   ])
 
-  let placeholderImageID: number | string = placeholderImageDoc.id
-  let logoImageID: number | string = logoImageDoc.id
-  let personPlaceholderImageID: number | string = personPlaceholderImageDoc.id
-
-  if (payload.db.defaultIDType === 'text') {
-    placeholderImageID = `"${placeholderImageDoc.id}"`
-    logoImageID = `"${logoImageDoc.id}"`
-    personPlaceholderImageID = `"${personPlaceholderImageDoc.id}"`
-  }
-
   payload.logger.info(`— Seeding posts...`)
 
   await payload.create({
@@ -117,7 +107,7 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  const contactPageData = contact({ contactForm: contactForm })
+  const contactPageData = contact({ contactForm: contactForm, heroImageID: placeholderImageDoc.id })
   const homePageData = home({newsletterForm: newsletterForm, logoID: logoImageDoc.id, personPlaceholderImageID: personPlaceholderImageDoc.id, image1ID: placeholderImageDoc.id})
 
   const [_, contactPage] = await Promise.all([
