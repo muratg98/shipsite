@@ -135,6 +135,7 @@ export const home: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pages'
         }
       ]
     },
+    // NEWSLETTER FORM BLOCK START
     {
       blockType: 'formBlock',
       enableIntro: true,
@@ -191,6 +192,7 @@ export const home: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pages'
         }
       }
     },
+    // NEWSLETTER FORMBLOCK END
     {
     blockType: 'zigzag',
     blockName: 'ZigZag',
