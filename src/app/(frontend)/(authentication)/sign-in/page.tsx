@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import SignInForm from "./SignInForm";
 import { getCachedGlobal } from "@/utilities/getGlobals";
 import type { Media } from "@/payload-types";

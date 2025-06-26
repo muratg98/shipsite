@@ -59,6 +59,7 @@ export const auth = betterAuth({
             });
           }
       }),
+      // STRIPE PLUGIN START
         stripe({
             stripeClient,
             stripeWebhookSecret: process.env.STRIPE_WEBHOOKS_ENDPOINT_SECRET!,
@@ -105,6 +106,7 @@ export const auth = betterAuth({
                   }
             }
         }) 
+        // STRIPE PLUGIN END
     ],
     socialProviders: {
         github: {
