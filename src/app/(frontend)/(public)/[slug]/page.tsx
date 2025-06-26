@@ -67,6 +67,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+  // USING PRICING ADDED CODE
   const payload = await getPayload({ config: configPromise })
   const updatedLayout = await Promise.all(
     layout.map(async (block) => {
@@ -95,6 +96,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       return block;
     })
   );
+  // USING PRICING END OF CODE
 
   return (
     <>
