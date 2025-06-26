@@ -8,6 +8,7 @@ import { shipshipPlaceholderImage } from './shipshipPlaceholderImage'
 import { logoImage } from './shipshipLogoImage'
 import { personPlaceholderImage } from './personPlaceholderImage'
 import { post1 } from './post-1'
+import { aboutUs } from './about-us-page'
 
 const collections: CollectionSlug[] = [
   'categories',
@@ -109,8 +110,9 @@ export const seed = async ({
 
   const contactPageData = contact({ contactForm: contactForm, heroImageID: placeholderImageDoc.id })
   const homePageData = home({newsletterForm: newsletterForm, logoID: logoImageDoc.id, personPlaceholderImageID: personPlaceholderImageDoc.id, image1ID: placeholderImageDoc.id})
+  const aboutUsPageData = aboutUs({ contactForm: contactForm, heroImageID: placeholderImageDoc.id })
 
-  const [_, contactPage] = await Promise.all([
+  const [_, contactPage, aboutUsPage] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
@@ -127,6 +129,14 @@ export const seed = async ({
         disableRevalidate: true
       }
     }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      data: aboutUsPageData,
+      context: {
+        disableRevalidate: true
+      }
+    })
   ])
 
   payload.logger.info(`— Seeding globals...`)
@@ -144,6 +154,13 @@ export const seed = async ({
             type: 'custom',
             url: '/posts',
             label: 'Posts',
+          },
+        },
+        {
+          link: {
+            type: 'custom',
+            url: '/about-us',
+            label: 'About Us',
           },
         },
         {
