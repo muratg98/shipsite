@@ -4,9 +4,8 @@ import { MongoClient } from "mongodb";
 import { getPayload } from "payload";
 import configPromise from '@payload-config'
 import { magicLink } from "better-auth/plugins";
-import { createAuthMiddleware } from "better-auth/api";
 import Stripe from "stripe";
-import { stripe } from "@better-auth/stripe"
+import { stripe } from "@better-auth/stripe";
 
 const client = new MongoClient(process.env.DATABASE_URI);
 const db = client.db()
